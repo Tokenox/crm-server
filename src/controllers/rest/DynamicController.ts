@@ -1,7 +1,7 @@
 import { Controller } from "@tsed/di";
-import { BodyParams, PathParams } from "@tsed/platform-params";
+import { BodyParams } from "@tsed/platform-params";
 import { Delete, Get, Post, Put } from "@tsed/schema";
-import { Schema, model, Model } from "mongoose";
+import { Schema, model } from "mongoose";
 
 @Controller("/dynamic")
 export class DynamicController {
@@ -51,12 +51,11 @@ export class DynamicController {
       createdAt: new Date(),
       updatedAt: new Date(),
       adminId: "5f9b3b7b9b0b3c2b3c2b3c2b"
-    }); // Provide the data
+    });
     await newRecord.save();
     return { message: `Model ${newRecord} created successfully.` };
   }
 
-  // get data from dynamic schema and model
   @Get("/")
   async getDynamicModel(@BodyParams() modelData: any) {
     const { tableName, columns } = modelData;
@@ -83,7 +82,6 @@ export class DynamicController {
     return result;
   }
 
-  // update data in dynamic schema and model
   @Put("/update")
   async updateDynamicModel(@BodyParams() modelData: any) {
     const { tableName, columns, data, id } = modelData;
@@ -110,7 +108,6 @@ export class DynamicController {
     return { message: `Model ${result} updated successfully.` };
   }
 
-  // get data by id from dynamic schema and model
   @Get("/id")
   async getDynamicModelById(@BodyParams() modelData: any) {
     const { tableName, columns, id } = modelData;
@@ -139,7 +136,6 @@ export class DynamicController {
     return result;
   }
 
-  // delete data by id from dynamic schema and model
   @Delete("/delete")
   async deleteDynamicModelById(@BodyParams() modelData: any) {
     const { tableName, columns, id } = modelData;
