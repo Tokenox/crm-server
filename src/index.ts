@@ -3,6 +3,7 @@ import { PlatformBuilder } from "@tsed/common";
 import { PlatformExpress } from "@tsed/platform-express";
 import { Server } from "./Server";
 import mongoose from "mongoose";
+import { Secrets } from "./util/secrets";
 
 export class Application {
   private app: express.Application;
@@ -10,6 +11,7 @@ export class Application {
   public databaseConnection: any;
 
   public async initializeServer() {
+    await Secrets.initialize();
     // establish database connection with mongoose.connect()
     this.databaseConnection = await mongoose.connect(
       "mongodb+srv://raza8r:4KZT2u8i88lOxYNj@crm-cluster.bl1i8v3.mongodb.net/?retryWrites=true&w=majority"

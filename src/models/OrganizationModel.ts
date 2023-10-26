@@ -11,9 +11,6 @@ export class OrganizationModel {
   name: string;
 
   @Property()
-  adminId: string;
-
-  @Property()
   @Default(new Date())
   createdAt: Date;
 
