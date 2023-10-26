@@ -1,0 +1,10 @@
+{
+    "mongoose": [
+      {
+        "id": "default",
+        "url": "mongodb+srv://raza8r:TyyzQ3XdDaVlJj3b@crm-cluster.bl1i8v3.mongodb.net/?retryWrites=true&w=majority",
+        "connectionOptions": {}
+      }
+    ]
+  }
+  
