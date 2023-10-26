@@ -1,13 +1,13 @@
 import { Inject, Injectable } from "@tsed/di";
 import { MongooseModel } from "@tsed/mongoose";
-import { DynamicModel } from "../models/dynamicModelSchema";
+import { OrganizationModel } from "../models/OrganizationModel";
 
 @Injectable()
 export class OrganizationService {
-  constructor(@Inject(DynamicModel) private dynamicModel: MongooseModel<typeof DynamicModel>) {}
+  constructor(@Inject(OrganizationModel) private orgModel: MongooseModel<typeof OrganizationModel>) {}
 
   public async createOrg() {
-    const model = await this.dynamicModel.create({
+    const model = await this.orgModel.create({
       name: "rainmaker",
       description: "rainmaker desc",
       createdDate: new Date(),
