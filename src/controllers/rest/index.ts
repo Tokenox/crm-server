@@ -5,3 +5,5 @@
 export * from "./DynamicController";
 export * from "./OrganizationController";
 export * from "./AuthenticationController";
+export * from "./CategoryController";
+export * from "./LeadController";

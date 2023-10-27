@@ -55,7 +55,6 @@ export class CategoryResultModel {
   @Property() public readonly orgId: string;
   @Property() public readonly createdAt: Date;
   @Property() public readonly updatedAt: Date;
-  @Property() public readonly deletedAt: Date;
 }
 
 export class LeadResultModel {
