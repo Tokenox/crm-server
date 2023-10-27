@@ -2324,14 +2324,6 @@
     pluralize "8.0.0"
     tslib "2.3.1"
 
-"@tsed/cli-plugin-passport@4.6.4":
-  version "4.6.4"
-  resolved "https://registry.yarnpkg.com/@tsed/cli-plugin-passport/-/cli-plugin-passport-4.6.4.tgz#12a385dfae61d0a70ec59cec234f86edf09cb9e9"
-  integrity sha512-FtRUy3EGtT0V+GRTRV3AKCzuX3LgTzdR97klfmh5/iExyToVw2Jq/RGi/4+jqQ9MMn0bPRIGZhaqOakHKpm1UA==
-  dependencies:
-    change-case "^4.1.2"
-    tslib "2.3.1"
-
 "@tsed/common@^7.39.1":
   version "7.39.1"
   resolved "https://registry.yarnpkg.com/@tsed/common/-/common-7.39.1.tgz#b28e525aa890ce9e232a0bf2ed9430c1a6addc5f"
@@ -2434,13 +2426,6 @@
   version "7.39.1"
   resolved "https://registry.yarnpkg.com/@tsed/openspec/-/openspec-7.39.1.tgz#688741b8e7e6018bf50cfd7e7ed7e1a57f4de7ce"
   integrity sha512-vI5ad4oIaO2N7iW1+IAOoTFIikgQvyikObM42jEiEorHDiSXb06Ta8GT2/srhnO0Q7wpuLevs/G+meEipOptgA==
-
-"@tsed/passport@^7.39.1":
-  version "7.39.1"
-  resolved "https://registry.yarnpkg.com/@tsed/passport/-/passport-7.39.1.tgz#639a1ba154065632dd25be11a6045bff36d8a285"
-  integrity sha512-0v7Nm2Ssl+5P9FBu7TYi8o0O+CoaxnCALBY5iRpTXykusL7Gml0igzLJ+dambks2r3Kga3LQbxlVd6toXSg4hw==
-  dependencies:
-    tslib "2.5.0"
 
 "@tsed/platform-cache@^7.39.1":
   version "7.39.1"
@@ -2771,13 +2756,6 @@
   integrity sha512-889Vq/77eEpidCwh52sVWpbnqQmIwL8yVBekNbrztVEaWKOCRH3Eq6hjIJh1jwsGDEAJEH0RR+YhpH9mfELLKA==
   dependencies:
     "@types/node" "*"
-
-"@types/passport@^1.0.14":
-  version "1.0.14"
-  resolved "https://registry.yarnpkg.com/@types/passport/-/passport-1.0.14.tgz#7ca891b04ae08d7ca4dbf30fece7c86174a16db9"
-  integrity sha512-D6p2ygR2S7Cq5PO7iUaEIQu/5WrM0tONu6Lxgk0C9r3lafQIlVpWCo3V/KI9To3OqHBxcfQaOeK+8AvwW5RYmw==
-  dependencies:
-    "@types/express" "*"
 
 "@types/qs@*":
   version "6.9.9"
@@ -6653,20 +6631,6 @@ pascal-case@^3.1.2:
     no-case "^3.0.4"
     tslib "^2.0.3"
 
-passport-strategy@1.x.x:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/passport-strategy/-/passport-strategy-1.0.0.tgz#b5539aa8fc225a3d1ad179476ddf236b440f52e4"
-  integrity sha512-CB97UUvDKJde2V0KDWWB3lyf6PC3FaZP7YxZ2G8OAtn9p4HI9j9JLP9qjOGZFvyl8uwNT8qM+hGnz/n16NI7oA==
-
-passport@^0.6.0:
-  version "0.6.0"
-  resolved "https://registry.yarnpkg.com/passport/-/passport-0.6.0.tgz#e869579fab465b5c0b291e841e6cc95c005fac9d"
-  integrity sha512-0fe+p3ZnrWRW74fe8+SvCyf4a3Pb2/h7gFkQ8yTJpAO50gDzlfjZUZTO1k5Eg9kUct22OxHLqDZoKUWRHOh9ug==
-  dependencies:
-    passport-strategy "1.x.x"
-    pause "0.0.1"
-    utils-merge "^1.0.1"
-
 path-case@^3.0.4:
   version "3.0.4"
   resolved "https://registry.yarnpkg.com/path-case/-/path-case-3.0.4.tgz#9168645334eb942658375c56f80b4c0cb5f82c6f"
@@ -6719,11 +6683,6 @@ path-type@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/path-type/-/path-type-4.0.0.tgz#84ed01c0a7ba380afe09d90a8c180dcd9d03043b"
   integrity sha512-gDKb8aZMDeD/tZWs9P6+q0J9Mwkdl6xMV8TjnGP3qJVJ06bdMgkbBlLU8IdfOsIsFz2BW1rNVT3XuNEl8zPAvw==
-
-pause@0.0.1:
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/pause/-/pause-0.0.1.tgz#1d408b3fdb76923b9543d96fb4c9dfd535d9cb5d"
-  integrity sha512-KG8UEiEVkR3wGEb4m5yZkVCzigAD+cVEJck2CzYZO37ZGJfctvVptVO192MwrtPhzONn6go8ylnOdMhKqi4nfg==
 
 pend@~1.2.0:
   version "1.2.0"
@@ -7862,7 +7821,7 @@ util-deprecate@^1.0.1, util-deprecate@~1.0.1:
   resolved "https://registry.yarnpkg.com/util-deprecate/-/util-deprecate-1.0.2.tgz#450d4dc9fa70de732762fbd2d4a28981419a0ccf"
   integrity sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==
 
-utils-merge@1.0.1, utils-merge@^1.0.1:
+utils-merge@1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/utils-merge/-/utils-merge-1.0.1.tgz#9f95710f50a267947b2ccc124741c1028427e713"
   integrity sha512-pMZTvIkT1d+TFGvDOqodOclx0QWkkgi6Tdoa8gC8ffGAAqz9pzPTZWAybbsHHoED/ztMtkv/VoYTYyShUn81hA==

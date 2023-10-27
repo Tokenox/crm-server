@@ -29,7 +29,6 @@
     "@tsed/logger-file": "^6.6.3",
     "@tsed/mongoose": "^7.39.1",
     "@tsed/openspec": "^7.39.1",
-    "@tsed/passport": "^7.39.1",
     "@tsed/platform-cache": "^7.39.1",
     "@tsed/platform-exceptions": "^7.39.1",
     "@tsed/platform-express": "^7.39.1",
@@ -62,7 +61,6 @@
     "method-override": "^3.0.0",
     "mongoose": "^7.6.3",
     "nodemailer": "^6.9.7",
-    "passport": "^0.6.0",
     "socket.io": "^4.7.2"
   },
   "devDependencies": {
@@ -76,7 +74,6 @@
     "@tsed/cli-plugin-eslint": "4.6.4",
     "@tsed/cli-plugin-jest": "4.6.4",
     "@tsed/cli-plugin-mongoose": "4.6.4",
-    "@tsed/cli-plugin-passport": "4.6.4",
     "@tsed/testing-mongoose": "^7.39.1",
     "@types/compression": "^1.7.4",
     "@types/cookie-parser": "^1.4.5",
@@ -86,7 +83,6 @@
     "@types/method-override": "^0.0.34",
     "@types/multer": "^1.4.9",
     "@types/node": "^20.8.7",
-    "@types/passport": "^1.0.14",
     "@types/supertest": "^2.0.15",
     "@typescript-eslint/eslint-plugin": "^6.9.0",
     "@typescript-eslint/parser": "^6.9.0",
