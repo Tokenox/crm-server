@@ -32,4 +32,6 @@ export class OrganizationController {
     };
     return new SuccessArrayResult(response.orgs, OrganizationResultModel);
   }
+
+  
 }

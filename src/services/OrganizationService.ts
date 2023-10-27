@@ -6,10 +6,9 @@ import { OrganizationModel } from "../models/OrganizationModel";
 export class OrganizationService {
   constructor(@Inject(OrganizationModel) private orgModel: MongooseModel<OrganizationModel>) {}
 
-  public async createOrg({ name, adminId }: { name: string; adminId: string }) {
+  public async createOrganization({ name }: { name: string }) {
     const model = await this.orgModel.create({
-      name,
-      adminId
+      name
     });
     return model;
   }

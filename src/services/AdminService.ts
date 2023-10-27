@@ -5,19 +5,26 @@ import { ADMIN_NOT_FOUND, INVALID_TOKEN } from "../util/errors";
 import { encrypt } from "../util/crypto";
 import { createPasswordHash, createSessionToken } from "../util";
 import { JWTPayload } from "../../types";
+import { AdminModel } from "../models/AdminModel";
+import { MongooseModel } from "@tsed/mongoose";
+import { OrganizationModel } from "../models/OrganizationModel";
+import { VerifySessionModal } from "../models/VerifySessionModal";
 
 @Injectable()
 export class AdminService {
-  @Inject()
-  private organizationService: OrganizationService;
+  constructor(
+    @Inject(OrganizationModel) private organizationService: MongooseModel<OrganizationModel>,
+    @Inject(AdminModel) private admin: MongooseModel<AdminModel>,
+    @Inject(VerifySessionModal) private verifySession: MongooseModel<VerifySessionModal>
+  ) {}
 
   private createToken(id: string) {
     return encrypt(id);
   }
 
-//   public async findAdminById(adminId: string) {
-//     return await prisma.admin.findFirst({ where: { id: adminId } });
-//   }
+  public async findAdminById(adminId: string) {
+    return await this.admin.findById({ _id: adminId });
+  }
 
   /**
    * Asserts that the user has the given permissions
@@ -32,88 +39,73 @@ export class AdminService {
       if (opts.hasRole && (!role || !opts.hasRole.includes(role))) throw new Forbidden("Forbidden");
       if (opts.restrictCompany && company !== opts.restrictCompany) throw new Forbidden("Forbidden");
       if (role === "manager" && !company) throw new Forbidden("Forbidden, company not specified");
-      const org = await this.organizationService.findOrganizationByName(company);
+      const org = await this.organizationService.findOne({ name: company });
       return { role, company, orgId: org?.id, email };
     }
     return {};
   }
 
-//   public async findAdminByEmail(email: string) {
-//     return await prisma.admin.findFirst({ where: { email } });
-//   }
+  public async findAdminByEmail(email: string) {
+    return await this.admin.findOne({ email });
+  }
 
-//   public async updateAdminAuth(adminId: string, twoFactorEnabled: boolean) {
-//     return await prisma.admin.update({
-//       where: { id: adminId },
-//       data: { twoFactorEnabled }
-//     });
-//   }
+  public async updateAdminAuth(adminId: string, twoFactorEnabled: boolean) {
+    return await this.admin.findByIdAndUpdate({ _id: adminId }, { twoFactorEnabled });
+  }
 
-//   public async updateAdmin(data: { id: string; name?: string; email?: string }) {
-//     const { id, name, email } = data;
-//     return await prisma.admin.update({
-//       where: { id },
-//       data: {
-//         name: name && name,
-//         email: email && email
-//       }
-//     });
-//   }
+  public async updateAdmin(data: { id: string; name?: string; email?: string }) {
+    const { id, name, email } = data;
+    return await this.admin.findByIdAndUpdate({ _id: id }, { name, email });
+  }
 
-//   public async createAdmin(params: { email: string; name: string; password: string; organizationId: string }) {
-//     const { email, name, password, organizationId } = params;
-//     return await prisma.admin.create({
-//       data: {
-//         email,
-//         name,
-//         orgId: organizationId,
-//         password: createPasswordHash({ email, password })
-//       }
-//     });
-//   }
+  public async createAdmin(params: { email: string; name: string; password: string; organizationId: string }) {
+    const { email, name, password, organizationId } = params;
+    return await this.admin.create({
+      email,
+      name,
+      orgId: organizationId,
+      password: createPasswordHash({ email, password })
+    });
+  }
 
-//   public async verifySessionCookie(sessionCookie: string) {
-//     return await prisma.verifyAdminSession.findFirst({ where: { sessionCode: sessionCookie } });
-//   }
+  public async verifySessionCookie(sessionCookie: string) {
+    return await this.verifySession.findOne({ token: sessionCookie });
+  }
 
-//   public async getActiveAdmin(token: string) {
-//     const decodedToken = await this.verifySessionCookie(token);
-//     if (!decodedToken || !decodedToken.adminId) throw new Forbidden(INVALID_TOKEN);
-//     const admin = await this.findAdminById(decodedToken.adminId);
-//     if (!admin) throw new Forbidden(ADMIN_NOT_FOUND);
-//     return admin;
-//   }
+  public async getActiveAdmin(token: string) {
+    const decodedToken = await this.verifySessionCookie(token);
+    if (!decodedToken || !decodedToken.adminId) throw new Forbidden(INVALID_TOKEN);
+    const admin = await this.findAdminById(decodedToken.adminId);
+    if (!admin) throw new Forbidden(ADMIN_NOT_FOUND);
+    return admin;
+  }
 
-//   public async createSessionCookie(admin: Admin) {
-//     const findSession = await prisma.verifyAdminSession.findFirst({ where: { adminId: admin.id } });
-//     const token = createSessionToken({
-//       id: admin.id,
-//       email: admin.email,
-//       role: admin.role || ""
-//     });
-//     if (!findSession) {
-//       await prisma.verifyAdminSession.create({
-//         data: { sessionCode: token, adminId: admin.id, lastLogin: new Date() }
-//       });
-//     } else {
-//       await prisma.verifyAdminSession.update({
-//         where: { id: findSession.id },
-//         data: { sessionCode: token, lastLogin: new Date() }
-//       });
-//     }
-//     return token;
-//   }
+  public async createSessionCookie(admin: AdminModel) {
+    const findSession = await this.verifySession.findOne({ adminId: admin._id });
+    const token = createSessionToken({
+      id: admin._id,
+      email: admin.email,
+      role: admin.role || ""
+    });
+    if (!findSession) {
+      await this.verifySession.create({
+        token,
+        adminId: admin._id,
+        lastLogin: new Date()
+      });
+    } else {
+      await this.verifySession.updateOne({ adminId: admin._id }, { token, lastLogin: new Date() });
+    }
+    return token;
+  }
 
-//   public async deleteSessionCookie(adminId: string) {
-//     return await prisma.verifyAdminSession.deleteMany({ where: { adminId, logout: true, logoutAt: new Date() } });
-//   }
+  public async deleteSessionCookie(adminId: string) {
+    return await this.verifySession.deleteMany({ adminId, logout: true, logoutAt: new Date() });
+  }
 
-//   public async updateAdminPassword({ email, password }: { email: string; password: string }) {
-//     const admin = await this.findAdminByEmail(email);
-//     if (!admin) throw new Forbidden(ADMIN_NOT_FOUND);
-//     return await prisma.admin.update({
-//       where: { id: admin.id },
-//       data: { password: createPasswordHash({ email, password }) }
-//     });
-//   }
+  public async updateAdminPassword({ email, password }: { email: string; password: string }) {
+    const admin = await this.findAdminByEmail(email);
+    if (!admin) throw new Forbidden(ADMIN_NOT_FOUND);
+    return await this.admin.findByIdAndUpdate({ _id: admin._id }, { password: createPasswordHash({ email, password }) });
+  }
 }

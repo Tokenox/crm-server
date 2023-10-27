@@ -1,6 +1,7 @@
-import { Default, Property } from "@tsed/schema";
+import { CollectionOf, Default, Property } from "@tsed/schema";
 import { Model, ObjectID, Ref } from "@tsed/mongoose";
 import { OrganizationModel } from "./OrganizationModel";
+import { VerifySessionModal } from "./VerifySessionModal";
 
 @Model()
 export class AdminModel {
@@ -19,7 +20,10 @@ export class AdminModel {
   @Property()
   role: string;
 
-  // relation with org
+  @Property()
+  @Default(false)
+  twoFactorEnabled: boolean;
+
   @Property()
   orgId: string;
   @Property()
@@ -32,4 +36,8 @@ export class AdminModel {
 
   @Ref(() => OrganizationModel)
   organization: Ref<OrganizationModel>;
+
+  @Ref(() => VerifySessionModal)
+  @CollectionOf(() => VerifySessionModal)
+  verifySessions: Ref<VerifySessionModal>[];
 }
