@@ -17,12 +17,6 @@ export class StartVerificationParams {
   @Required() public readonly email: string;
   @Required() @Enum(VerificationEnum) public readonly type: VerificationEnum | undefined;
 }
-class UserIdModel {
-  @Property() public readonly userId: string;
-}
-class UsernameExistsParams {
-  @Required() public readonly username: string;
-}
 
 class UpdateAdminPasswordParams {
   @Required() public readonly code: string;

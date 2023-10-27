@@ -20,4 +20,8 @@ export class OrganizationService {
   public async findOrganizationByName(name: string) {
     return await this.orgModel.findOne({ name });
   }
+
+  public async findOrganizationById(id: string) {
+    return await this.orgModel.findById({ _id: id });
+  }
 }
