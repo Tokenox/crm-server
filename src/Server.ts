@@ -5,7 +5,6 @@ import "@tsed/platform-express"; // /!\ keep this import
 import "@tsed/ajv";
 import "@tsed/swagger";
 import "@tsed/mongoose";
-import "passport";
 import { config } from "./config/index";
 import * as rest from "./controllers/rest/index";
 import * as pages from "./controllers/pages/index";
@@ -31,14 +30,6 @@ import compression from "compression";
       path: "/doc",
       specVersion: "3.0.1"
     }
-  ],
-  middlewares: [
-    "cors",
-    "cookie-parser",
-    "compression",
-    "method-override",
-    "json-parser",
-    { use: "urlencoded-parser", options: { extended: true } }
   ],
   views: {
     root: join(process.cwd(), "../views"),

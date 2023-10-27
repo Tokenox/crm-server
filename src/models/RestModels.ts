@@ -58,7 +58,7 @@ export class CategoryResultModel {
 }
 
 export class LeadResultModel {
-  @Property() public readonly id: string;
+  @Property() public readonly _id: string;
   @Property() public readonly firstName: string;
   @Property() public readonly lastName: string;
   @Property() public readonly email: string;
@@ -67,5 +67,4 @@ export class LeadResultModel {
   @Property() public readonly orgId: string;
   @Property() public readonly createdAt: Date;
   @Property() public readonly updatedAt: Date;
-  @Property() public readonly deletedAt: Date;
 }

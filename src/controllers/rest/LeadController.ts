@@ -30,13 +30,7 @@ export class LeadController {
     const { orgId } = await this.adminService.checkPermissions({ hasRole: [ADMIN, MANAGER] }, context.get("user"));
     if (!orgId) throw new BadRequest(ORG_NOT_FOUND);
     const leads = await this.leadService.findLeadsByOrgId(orgId);
-    const response = leads.map((lead) => {
-      return {
-        id: lead._id,
-        ...lead
-      };
-    });
-    return new SuccessArrayResult(response, Object);
+    return new SuccessArrayResult(leads, Object);
   }
 
   @Get("/:id")
@@ -45,7 +39,20 @@ export class LeadController {
     const { orgId } = await this.adminService.checkPermissions({ hasRole: [ADMIN, MANAGER] }, context.get("user"));
     if (!orgId) throw new BadRequest(ORG_NOT_FOUND);
     const lead = await this.leadService.findLeadById(id);
-    return new SuccessResult({ ...lead, id: lead?._id }, Object);
+    return new SuccessResult(
+      {
+        _id: lead?._id,
+        firstName: lead?.firstName,
+        lastName: lead?.lastName,
+        email: lead?.email,
+        phone: lead?.phone,
+        categoryId: lead?.categoryId,
+        orgId: lead?.orgId,
+        createdAt: lead?.createdAt,
+        updatedAt: lead?.updatedAt
+      },
+      LeadResultModel
+    );
   }
 
   @Post("/")
@@ -54,17 +61,30 @@ export class LeadController {
     const { orgId } = await this.adminService.checkPermissions({ hasRole: [ADMIN, MANAGER] }, context.get("user"));
     if (!orgId) throw new BadRequest(ORG_NOT_FOUND);
     const lead = await this.leadService.createLead({ ...body, orgId });
-    return new SuccessResult(lead, Object);
+    return new SuccessResult(
+      {
+        _id: lead?._id,
+        firstName: lead?.firstName,
+        lastName: lead?.lastName,
+        email: lead?.email,
+        phone: lead?.phone,
+        categoryId: lead?.categoryId,
+        orgId: lead?.orgId,
+        createdAt: lead?.createdAt,
+        updatedAt: lead?.updatedAt
+      },
+      LeadResultModel
+    );
   }
 
-  // @Post("/bulk")
-  // @Returns(200, SuccessResult).Of(SuccessMessageModel)
-  // public async createBulkLeads(@BodyParams() body: LeadBodyParam[], @Context() context: Context) {
-  //   const { orgId } = await this.adminService.checkPermissions({ hasRole: [ADMIN, MANAGER] }, context.get("user"));
-  //   if (!orgId) throw new BadRequest(ORG_NOT_FOUND);
-  //   const leads = await this.leadService.createBulkLeads({ body, orgId });
-  //   return new SuccessResult({ success: true, message: `${leads.length} leads created successfully` }, SuccessMessageModel);
-  // }
+  @Post("/bulk")
+  @Returns(200, SuccessResult).Of(SuccessMessageModel)
+  public async createBulkLeads(@BodyParams() body: LeadBodyParam[], @Context() context: Context) {
+    const { orgId } = await this.adminService.checkPermissions({ hasRole: [ADMIN, MANAGER] }, context.get("user"));
+    if (!orgId) throw new BadRequest(ORG_NOT_FOUND);
+    const leads = await this.leadService.createBulkLeads({ body, orgId });
+    return new SuccessResult({ success: true, message: `leads created successfully` }, SuccessMessageModel);
+  }
 
   @Put()
   @Returns(200, SuccessResult).Of(LeadResultModel)
@@ -72,7 +92,20 @@ export class LeadController {
     const { orgId } = await this.adminService.checkPermissions({ hasRole: [ADMIN, MANAGER] }, context.get("user"));
     if (!orgId) throw new BadRequest(ORG_NOT_FOUND);
     const lead = await this.leadService.updateLead({ ...body });
-    return new SuccessResult(lead, Object);
+    return new SuccessResult(
+      {
+        _id: lead?._id,
+        firstName: lead?.firstName,
+        lastName: lead?.lastName,
+        email: lead?.email,
+        phone: lead?.phone,
+        categoryId: lead?.categoryId,
+        orgId: lead?.orgId,
+        createdAt: lead?.createdAt,
+        updatedAt: lead?.updatedAt
+      },
+      LeadResultModel
+    );
   }
 
   @Delete("/:id")
