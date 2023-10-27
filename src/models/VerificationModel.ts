@@ -6,7 +6,7 @@ enum TypeEnum {
   PASSWORD = "password"
 }
 
-@Model()
+@Model({ name: "verification" })
 export class VerificationModel {
   @ObjectID("id")
   _id: string;

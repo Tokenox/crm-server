@@ -14,7 +14,7 @@ export interface AdminTypes {
     device?: string;
   }
   
-  export type VerificationType = "EMAIL" | "PASSWORD" | "";
+  export type VerificationType = "email" | "password" | "";
   
   export interface NodeMailerTypes {
     email: string;
@@ -23,8 +23,8 @@ export interface AdminTypes {
   }
   
   export enum VerificationEnum {
-    EMAIL = "EMAIL",
-    PASSWORD = "PASSWORD"
+    EMAIL = "email",
+    PASSWORD = "password"
   }
   
   export type CategoryBodyTypes = {

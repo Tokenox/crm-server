@@ -3,7 +3,7 @@ import { Model, ObjectID, Ref } from "@tsed/mongoose";
 import { OrganizationModel } from "./OrganizationModel";
 import { VerifySessionModal } from "./VerifySessionModal";
 
-@Model()
+@Model({ name: "admin" })
 export class AdminModel {
   @ObjectID("id")
   _id: string;

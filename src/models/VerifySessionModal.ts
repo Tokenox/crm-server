@@ -2,7 +2,7 @@ import { Model, ObjectID, Ref } from "@tsed/mongoose";
 import { Default, Property } from "@tsed/schema";
 import { AdminModel } from "./AdminModel";
 
-@Model()
+@Model({ name: "verification-session" })
 export class VerifySessionModal {
   @ObjectID("id")
   _id: string;

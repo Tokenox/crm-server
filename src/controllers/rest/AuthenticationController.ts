@@ -58,8 +58,8 @@ export class AuthenticationController {
     const { email, type } = body;
     if (!email || !type) throw new BadRequest(MISSING_PARAMS);
     const findAdmin = await this.adminService.findAdminByEmail(email);
-    if (type === "EMAIL" && findAdmin) throw new BadRequest(EMAIL_EXISTS);
-    if (type === "PASSWORD" && !findAdmin) throw new BadRequest(EMAIL_NOT_EXISTS);
+    if (type === VerificationEnum.EMAIL && findAdmin) throw new BadRequest(EMAIL_EXISTS);
+    if (type === VerificationEnum.PASSWORD && !findAdmin) throw new BadRequest(EMAIL_NOT_EXISTS);
     const verificationData = await this.verificationService.generateVerification({ email, type });
     await NodemailerClient.sendVerificationEmail({
       title: type || "Email",
