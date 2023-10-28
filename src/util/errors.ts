@@ -24,6 +24,7 @@ export const ACCOUNT_NOT_EXISTS_ANYMORE = "ACCOUNT_NOT_EXISTS_ANYMORE";
 export const SESSION_ALREADY_EXISTS = "SESSION_ALREADY_EXISTS";
 export const ORGANIZATION_NAME_ALREADY_EXISTS = "ORGANIZATION_NAME_ALREADY_EXISTS";
 export const ADMIN_ALREADY_EXISTS = "ADMIN_ALREADY_EXISTS";
+export const CATEGORY_ALREADY_EXISTS = "CATEGORY_ALREADY_EXISTS";
 
 export const errorMap: { [key: string]: string } = {
   SOMETHING_WENT_WRONG: "Looks like something is wrong, we are working to fix it.",
@@ -52,5 +53,6 @@ export const errorMap: { [key: string]: string } = {
   ACCOUNT_NOT_EXISTS_ANYMORE: "This account doesn't exist anymore.",
   SESSION_ALREADY_EXISTS: "You have already logged in from another device.",
   ORGANIZATION_NAME_ALREADY_EXISTS: "Organization already exists with this name.",
-  ADMIN_ALREADY_EXISTS: "Admin already exists with this email."
+  ADMIN_ALREADY_EXISTS: "Admin already exists with this email.",
+  CATEGORY_ALREADY_EXISTS: "Category already exists with this name."
 };

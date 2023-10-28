@@ -39,4 +39,8 @@ export class CategoryService {
   public async findCategory() {
     return await this.category.findOne();
   }
+
+  public async findCategoryByNameAndOrgId({ name, orgId }: { name: string; orgId: string }) {
+    return await this.category.findOne({ name, orgId });
+  }
 }

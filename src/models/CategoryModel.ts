@@ -35,7 +35,7 @@ export class CategoryModel {
   @Ref(() => OrganizationModel)
   org: Ref<OrganizationModel>;
 
-  @Ref(() => LeadModel)
-  @CollectionOf(() => LeadModel)
-  leads: Ref<LeadModel>[];
+  // @Ref(() => LeadModel)
+  // @CollectionOf(() => LeadModel)
+  // leads: Ref<LeadModel>[];
 }

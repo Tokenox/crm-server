@@ -1,6 +1,5 @@
 import { Inject, Injectable } from "@tsed/di";
 import { Forbidden } from "@tsed/exceptions";
-import { OrganizationService } from "./OrganizationService";
 import { ADMIN_NOT_FOUND, INVALID_TOKEN } from "../util/errors";
 import { encrypt } from "../util/crypto";
 import { createPasswordHash, createSessionToken } from "../util";

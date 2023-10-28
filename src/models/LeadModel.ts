@@ -34,8 +34,8 @@ export class LeadModel {
   @Default(new Date())
   updatedAt: Date;
 
-  @Ref(() => CategoryModel)
-  category: Ref<CategoryModel>;
+  // @Ref(() => CategoryModel)
+  // category: Ref<CategoryModel>;
 
   @Ref(() => OrganizationModel)
   org: Ref<OrganizationModel>;
