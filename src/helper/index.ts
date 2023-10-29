@@ -12,12 +12,23 @@ export const createSchema = ({ tableName, columns }: { tableName: string; column
     }
     const schema = new Schema(schemaDefinition);
     schema.add({
+      categoryId: String,
       adminId: String,
+      orgId: String,
       createdAt: Date,
       updatedAt: Date
     });
     // Create a dynamic model based on the schema
     dynamicModel = model(tableName, schema);
   }
-    return dynamicModel;
+  return dynamicModel;
+};
+
+// normalize data
+export const normalizeData = (data: any) => {
+  const result = data.map((item: any) => {
+    const { _id, __v, createdAt, updatedAt, orgId, categoryId, ...rest } = item._doc;
+    return rest;
+  });
+  return result;
 };

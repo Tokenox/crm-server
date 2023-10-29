@@ -29,7 +29,7 @@ export class CategoryController {
     const categories = await this.categoryService.findCategories({ orgId });
     const response = categories.map((category) => {
       return {
-        _id: category._id,
+        id: category._id,
         name: category.name,
         description: category.description,
         adminId: category.adminId,
@@ -47,7 +47,7 @@ export class CategoryController {
     const { orgId, email } = await this.adminService.checkPermissions({ hasRole: [ADMIN, MANAGER] }, context.get("user"));
     if (!orgId) throw new BadRequest(ORG_NOT_FOUND);
     const category = await this.categoryService.findCategoryById(id);
-    return new SuccessResult({ ...category?.toObject()! }, CategoryResultModel);
+    return new SuccessResult({ ...category?.toObject()!, id: category?._id }, CategoryResultModel);
   }
 
   @Post("/")
@@ -58,7 +58,7 @@ export class CategoryController {
     const admin = await this.adminService.findAdminByEmail(email!);
     if (!admin) throw new BadRequest(ADMIN_NOT_FOUND);
     const category = await this.categoryService.createCategory({ ...body, orgId, adminId: admin.id });
-    return new SuccessResult({ ...category.toObject() }, CategoryResultModel);
+    return new SuccessResult({ ...category.toObject(), id: category?._id }, CategoryResultModel);
   }
 
   @Put()
@@ -67,7 +67,7 @@ export class CategoryController {
     const { orgId, email } = await this.adminService.checkPermissions({ hasRole: [ADMIN, MANAGER] }, context.get("user"));
     if (!orgId) throw new BadRequest(ORG_NOT_FOUND);
     const category = await this.categoryService.updateCategory({ ...body });
-    return new SuccessResult({ ...category?.toObject()! }, CategoryResultModel);
+    return new SuccessResult({ ...category?.toObject()!, id: category?._id }, CategoryResultModel);
   }
 
   @Delete("/:id")

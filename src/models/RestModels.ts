@@ -48,7 +48,7 @@ export class OrganizationResultModel {
 }
 
 export class CategoryResultModel {
-  @Property() public readonly _id: string;
+  @Property() public readonly id: string;
   @Property() public readonly name: string;
   @Property() public readonly description: string;
   @Property() public readonly adminId: string;
