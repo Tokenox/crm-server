@@ -44,6 +44,7 @@
     "@types/jsonwebtoken": "^9.0.4",
     "@types/nodemailer": "^6.4.13",
     "ajv": "^8.12.0",
+    "axios": "^1.6.0",
     "barrelsby": "^2.8.1",
     "body-parser": "^1.20.2",
     "compression": "^1.7.4",

@@ -1,6 +1,6 @@
 import { BodyParams, Req, Res, Response } from "@tsed/common";
 import { Controller, Inject } from "@tsed/di";
-import { BadRequest, Forbidden, NotFound } from "@tsed/exceptions";
+import { BadRequest, Forbidden, NotFound, Unauthorized } from "@tsed/exceptions";
 import { Enum, Post, Property, Required, Returns, Put } from "@tsed/schema";
 import { ADMIN_NOT_FOUND, EMAIL_EXISTS, EMAIL_NOT_EXISTS, INCORRECT_PASSWORD, INVALID_TOKEN, MISSING_PARAMS } from "../../util/errors";
 import { SuccessMessageModel, VerificationSuccessModel, IsVerificationTokenCompleteModel, AdminResultModel } from "../../models/RestModels";
@@ -12,6 +12,7 @@ import { ADMIN_ALREADY_EXISTS, ORGANIZATION_NAME_ALREADY_EXISTS } from "../../ut
 import { OrganizationService } from "../../services/OrganizationService";
 import { createPasswordHash } from "../../util";
 import { VerificationEnum } from "../../../types";
+import axios from "axios";
 
 export class StartVerificationParams {
   @Required() public readonly email: string;
@@ -43,7 +44,7 @@ class AdminLoginBody {
 class RegisterOrgParams {
   @Property() public readonly company: string;
   @Required() public readonly email: string;
-  @Required() public readonly role: string;
+  @Property() public readonly role: string;
   @Property() public readonly name: string;
   @Property() public readonly password: string;
   @Property() public readonly verificationToken: string;
@@ -79,27 +80,25 @@ export class AuthenticationController {
   @Post("/register")
   @Returns(200, SuccessResult).Of(SuccessMessageModel)
   public async newOrg(@BodyParams() body: RegisterOrgParams) {
-    let { company = "voltaic", email, name, password, verificationToken , role} = body;
-    company = company.toLowerCase();
-    const organization = await this.organizationService.findOrganizationByName(company);
-    if (organization) throw new Error(ORGANIZATION_NAME_ALREADY_EXISTS);
-    const admin = await this.adminService.findAdminByEmail(email);
-    if (admin && organization) throw new Error(ADMIN_ALREADY_EXISTS);
-    // await this.verificationService.verifyToken({ verificationToken, email });
-    let org;
-    const findOrg = await this.organizationService.findOrganizations();
-    if (findOrg.length) org = findOrg[0];
-    if (!findOrg.length) {
-      org = await this.organizationService.createOrganization({ name: company, email: "dominiqmartinez13@gmail.com" });
-    }
-    await this.adminService.createAdmin({
-      email,
-      name: name || "",
-      role: role,
-      password: password || "",
-      organizationId: org?._id || org?.id || ""
+    let { email, name, password } = body;
+    let organization = await this.organizationService.findOrganization();
+    const response = await axios.post("https://voltaicqbapi.herokuapp.com/CRMAuth", {
+      repEmail: email
     });
-    return new SuccessResult({ success: true, message: "Organization created successfully" }, SuccessMessageModel);
+    if (response.data.recordID == "00000") throw new Unauthorized("Email is not authorized in Quickbase");
+    if (!response.data.recordID) throw new NotFound("Invalid qbId received from the API.");
+    const admin = await this.adminService.findAdminByEmail(email);
+    if (admin) throw new Error(ADMIN_ALREADY_EXISTS);
+    await this.adminService.createAdmin({
+      email: response.data.email,
+      name: name || "",
+      role: response.data.role,
+      recordID: response.data.recordID,
+      password: password,
+      organizationId: organization?._id || ""
+    });
+    await NodemailerClient.sendCompleteRegistrationEmail({ email });
+    return new SuccessResult({ success: true, message: "Admin registered successfully" }, SuccessMessageModel);
   }
 
   @Post("/complete-registration")
@@ -130,6 +129,7 @@ export class AuthenticationController {
         name: admin.name,
         email: admin.email,
         role: admin.role || "",
+        recordID: admin.recordID || "",
         twoFactorEnabled: admin.twoFactorEnabled,
         orgId: admin.orgId || "",
         company: "crm",

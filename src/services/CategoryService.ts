@@ -11,8 +11,8 @@ export class CategoryService {
     private leadService: LeadService
   ) {}
 
-  public async findCategories({ orgId }: { orgId: string }) {
-    return await this.category.find({ orgId });
+  public async findCategories() {
+    return await this.category.find();
   }
 
   public async findCategoryById(id: string) {

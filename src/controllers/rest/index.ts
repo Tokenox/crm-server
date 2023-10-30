@@ -7,3 +7,4 @@ export * from "./OrganizationController";
 export * from "./AuthenticationController";
 export * from "./CategoryController";
 export * from "./LeadController";
+export * from "./AdminController";

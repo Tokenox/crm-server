@@ -19,6 +19,9 @@ export class AdminModel {
   password: string;
 
   @Property()
+  recordID: string;
+
+  @Property()
   @Default("admin")
   role: string;
 
