@@ -33,6 +33,7 @@ export class AdminProfileResultModel {
   @Property() public readonly verifyStatus: string;
 }
 export class AdminResultModel {
+  @Property() public readonly name: string;
   @Property() public readonly role: string;
   @Property() public readonly company: string;
   @Property() public readonly email: string;
@@ -44,6 +45,7 @@ export class AdminResultModel {
 export class OrganizationResultModel {
   @Property() public readonly id: string;
   @Property() public readonly name: string;
+  @Property() public readonly email: string;
   @Property() public readonly createdAt: Date;
   @Property() public readonly updatedAt: Date;
 }

@@ -57,14 +57,19 @@ export class AdminService {
     return await this.admin.findByIdAndUpdate({ _id: id }, { name, email });
   }
 
-  public async createAdmin(params: { email: string; name: string; password: string; organizationId: string }) {
-    const { email, name, password, organizationId } = params;
+  public async createAdmin(params: { email: string; name: string; password: string; organizationId: string;role: string }) {
+    const { email, name, password, organizationId, role } = params;
     return await this.admin.create({
       email,
       name,
+      role,
       orgId: organizationId,
       password: createPasswordHash({ email, password })
     });
+  }
+
+  public async completeAdminRegistration({ id, name, email, password }: { id: string; name: string; email: string; password: string }) {
+    return await this.admin.findByIdAndUpdate({ _id: id }, { name, email, password: createPasswordHash({ email, password }) });
   }
 
   public async verifySessionCookie(sessionCookie: string) {

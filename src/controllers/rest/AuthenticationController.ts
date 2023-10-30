@@ -2,7 +2,7 @@ import { BodyParams, Req, Res, Response } from "@tsed/common";
 import { Controller, Inject } from "@tsed/di";
 import { BadRequest, Forbidden, NotFound } from "@tsed/exceptions";
 import { Enum, Post, Property, Required, Returns, Put } from "@tsed/schema";
-import { EMAIL_EXISTS, EMAIL_NOT_EXISTS, INCORRECT_PASSWORD, INVALID_TOKEN, MISSING_PARAMS } from "../../util/errors";
+import { ADMIN_NOT_FOUND, EMAIL_EXISTS, EMAIL_NOT_EXISTS, INCORRECT_PASSWORD, INVALID_TOKEN, MISSING_PARAMS } from "../../util/errors";
 import { SuccessMessageModel, VerificationSuccessModel, IsVerificationTokenCompleteModel, AdminResultModel } from "../../models/RestModels";
 import { SuccessResult } from "../../util/entities";
 import { VerificationService } from "../../services/VerificationService";
@@ -23,6 +23,12 @@ class UpdateAdminPasswordParams {
   @Required() public readonly password: string;
 }
 
+class CompleteRegistration {
+  @Required() public readonly name: string;
+  @Required() public readonly email: string;
+  @Required() public readonly password: string;
+}
+
 class ForgetAdminPasswordParams {
   @Required() public readonly email: string;
   @Required() public readonly password: string;
@@ -35,11 +41,12 @@ class AdminLoginBody {
 }
 
 class RegisterOrgParams {
-  @Required() public readonly company: string;
+  @Property() public readonly company: string;
   @Required() public readonly email: string;
-  @Required() public readonly name: string;
-  @Required() public readonly password: string;
-  @Required() public readonly verificationToken: string;
+  @Required() public readonly role: string;
+  @Property() public readonly name: string;
+  @Property() public readonly password: string;
+  @Property() public readonly verificationToken: string;
 }
 
 const isSecure = process.env.NODE_ENV === "production";
@@ -72,21 +79,38 @@ export class AuthenticationController {
   @Post("/register")
   @Returns(200, SuccessResult).Of(SuccessMessageModel)
   public async newOrg(@BodyParams() body: RegisterOrgParams) {
-    let { company, email, name, password, verificationToken } = body;
+    let { company = "voltaic", email, name, password, verificationToken , role} = body;
     company = company.toLowerCase();
     const organization = await this.organizationService.findOrganizationByName(company);
     if (organization) throw new Error(ORGANIZATION_NAME_ALREADY_EXISTS);
     const admin = await this.adminService.findAdminByEmail(email);
     if (admin && organization) throw new Error(ADMIN_ALREADY_EXISTS);
-    await this.verificationService.verifyToken({ verificationToken, email });
-    const org = await this.organizationService.createOrganization({ name: company });
+    // await this.verificationService.verifyToken({ verificationToken, email });
+    let org;
+    const findOrg = await this.organizationService.findOrganizations();
+    if (findOrg.length) org = findOrg[0];
+    if (!findOrg.length) {
+      org = await this.organizationService.createOrganization({ name: company, email: "dominiqmartinez13@gmail.com" });
+    }
     await this.adminService.createAdmin({
       email,
-      name,
-      password,
-      organizationId: org.id
+      name: name || "",
+      role: role,
+      password: password || "",
+      organizationId: org?._id || org?.id || ""
     });
     return new SuccessResult({ success: true, message: "Organization created successfully" }, SuccessMessageModel);
+  }
+
+  @Post("/complete-registration")
+  @Returns(200, SuccessResult).Of(SuccessMessageModel)
+  public async completeRegistration(@BodyParams() body: CompleteRegistration) {
+    const { name, email, password } = body;
+    if (!email || !password) throw new BadRequest(MISSING_PARAMS);
+    const admin = await this.adminService.findAdminByEmail(email);
+    if (!admin) throw new NotFound(ADMIN_NOT_FOUND);
+    await this.adminService.completeAdminRegistration({ id: admin.id, name, email, password });
+    return new SuccessResult({ success: true, message: "Admin registration successfully completed" }, SuccessMessageModel);
   }
 
   @Post("/login")
@@ -100,9 +124,10 @@ export class AuthenticationController {
     const expiresIn = 60 * 60 * 24 * 5 * 1000;
     const options = { maxAge: expiresIn, httpOnly: true, secure: isSecure };
     const sessionCookie = await this.adminService.createSessionCookie(admin);
-    res.cookie("session", sessionCookie, options);
+    // res.cookie("session", sessionCookie, options);
     return new SuccessResult(
       {
+        name: admin.name,
         email: admin.email,
         role: admin.role || "",
         twoFactorEnabled: admin.twoFactorEnabled,

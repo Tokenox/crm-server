@@ -13,6 +13,10 @@ export class OrganizationModel {
   @Required()
   name: string;
 
+  @Unique()
+  @Required()
+  email: string;
+
   @Property()
   @Default(new Date())
   createdAt: Date;

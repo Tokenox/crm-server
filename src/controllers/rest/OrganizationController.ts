@@ -4,7 +4,7 @@ import { Get, Post, Required, Returns } from "@tsed/schema";
 import { AdminService } from "../../services/AdminService";
 import { OrganizationResultModel } from "../../models/RestModels";
 import { OrganizationService } from "../../services/OrganizationService";
-import { SuccessArrayResult } from "../../util/entities";
+import { SuccessArrayResult, SuccessResult } from "../../util/entities";
 
 @Controller("/org")
 export class OrganizationController {
@@ -25,6 +25,7 @@ export class OrganizationController {
         return {
           id: org.id,
           name: org.name,
+          email: org.email,
           createdAt: org.createdAt,
           updatedAt: org.updatedAt
         };
@@ -33,5 +34,11 @@ export class OrganizationController {
     return new SuccessArrayResult(response.orgs, OrganizationResultModel);
   }
 
-  
+  @Get("/id")
+  @Returns(200, SuccessResult).Of(OrganizationResultModel)
+  public async getOrg(@Required() query: { id: string }, @Context() context: Context) {
+    const { orgId } = await this.adminService.checkPermissions({ hasRole: ["admin"] }, context.get("user"));
+    const org = await this.organizationService.findOrganizationById(orgId);
+    return new SuccessResult(org, Object);
+  }
 }
