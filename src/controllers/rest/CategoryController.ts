@@ -1,6 +1,6 @@
 import { Controller, Inject } from "@tsed/di";
 import { BodyParams, Context, PathParams } from "@tsed/platform-params";
-import { Delete, Get, Post, Property, Put, Required, Returns } from "@tsed/schema";
+import { ArrayOf, Delete, Get, Post, Property, Put, Required, Returns } from "@tsed/schema";
 import { CategoryResultModel, IdModel, SuccessMessageModel } from "../../models/RestModels";
 import { CategoryService } from "../../services/CategoryService";
 import { AdminService } from "../../services/AdminService";
@@ -8,10 +8,12 @@ import { ADMIN, MANAGER } from "../../util/constants";
 import { SuccessArrayResult, SuccessResult } from "../../util/entities";
 import { ADMIN_NOT_FOUND, ORG_NOT_FOUND } from "../../util/errors";
 import { BadRequest } from "@tsed/exceptions";
+import { CategoryFieldType } from "../../models/CategoryModel";
 
 class CategoryBodyParams {
   @Required() public name: string;
   @Property() public description: string;
+  @ArrayOf(Object) public fields: CategoryFieldType[];
 }
 
 @Controller("/category")
@@ -34,6 +36,7 @@ export class CategoryController {
         description: category.description,
         adminId: category.adminId,
         orgId: category.orgId,
+        fields: category.fields,
         createdAt: category.createdAt,
         updatedAt: category.updatedAt
       };

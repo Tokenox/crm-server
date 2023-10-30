@@ -62,9 +62,9 @@ export class DynamicController {
     const dynamicModel = createSchema({ tableName, columns });
 
     let category = await this.categoryServices.findCategoryByNameAndOrgId({ name: tableName, orgId });
-    if (!category) {
-      category = await this.categoryServices.createCategory({ name: tableName, orgId });
-    }
+    // if (!category) {
+    //   category = await this.categoryServices.createCategory({ name: tableName, orgId });
+    // }
     // format data to insert in dynamic schema
     const formattedData = data.map((item: any) => {
       return {

@@ -1,8 +1,13 @@
-import { CollectionOf, Default, Property } from "@tsed/schema";
+import { ArrayOf, CollectionOf, Default, Property } from "@tsed/schema";
 import { Model, ObjectID, Ref } from "@tsed/mongoose";
 import { AdminModel } from "./AdminModel";
 import { LeadModel } from "./LeadModel";
 import { OrganizationModel } from "./OrganizationModel";
+
+export type CategoryFieldType = {
+  name: string;
+  type: string;
+};
 
 @Model({ name: "category" })
 export class CategoryModel {
@@ -14,6 +19,9 @@ export class CategoryModel {
 
   @Property()
   description: string;
+
+  @ArrayOf(Object)
+  fields: CategoryFieldType[];
 
   @Property()
   adminId: string;

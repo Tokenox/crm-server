@@ -1,4 +1,5 @@
-import { Property, Required } from "@tsed/schema";
+import { ArrayOf, Property, Required } from "@tsed/schema";
+import { CategoryFieldType } from "./CategoryModel";
 
 export class IdModel {
   @Required() public readonly id: string;
@@ -53,6 +54,7 @@ export class CategoryResultModel {
   @Property() public readonly description: string;
   @Property() public readonly adminId: string;
   @Property() public readonly orgId: string;
+  @ArrayOf(Object) public readonly fields: CategoryFieldType[];
   @Property() public readonly createdAt: Date;
   @Property() public readonly updatedAt: Date;
 }
