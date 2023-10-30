@@ -32,10 +32,10 @@ export class DynamicController {
   @Returns(200, SuccessResult).Of(Object)
   async insertDynamicModel(@BodyParams() modelData: any, @Context() context: Context) {
     const { orgId } = await this.adminService.checkPermissions({ hasRole: [ADMIN, MANAGER] }, context.get("user"));
-    const { tableId, columns, data } = modelData;
+    const { tableId, data } = modelData;
     const category = await this.categoryServices.findCategoryById(tableId);
     if (!category) throw new BadRequest(CATEGORY_NOT_FOUND);
-    const dynamicModel = createSchema({ tableName: category.name, columns });
+    const dynamicModel = createSchema({ tableName: category.name, columns: category.fields });
 
     // let category = await this.categoryServices.findCategoryByNameAndOrgId({ name: tableName, orgId });
     // if (!category) {
