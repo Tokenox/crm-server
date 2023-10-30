@@ -82,6 +82,9 @@ export class AuthenticationController {
   public async newOrg(@BodyParams() body: RegisterOrgParams) {
     let { email, name, password } = body;
     let organization = await this.organizationService.findOrganization();
+    if (!organization) {
+      organization = await this.organizationService.createOrganization({ name: "Voltaic LLC", email });
+    }
     const response = await axios.post("https://voltaicqbapi.herokuapp.com/CRMAuth", {
       repEmail: email
     });
