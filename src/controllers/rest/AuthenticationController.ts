@@ -100,7 +100,6 @@ export class AuthenticationController {
       password: password,
       organizationId: organization?._id || ""
     });
-    await NodemailerClient.sendCompleteRegistrationEmail({ email });
     return new SuccessResult({ success: true, message: "Admin registered successfully" }, SuccessMessageModel);
   }
 
