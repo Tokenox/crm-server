@@ -130,4 +130,7 @@ export class AdminService {
   public async findAdminsByOrgId(orgId: string) {
     return await this.admin.find({ orgId });
   }
+  public async findAdmins() {
+    return await this.admin.find();
+  }
 }

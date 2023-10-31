@@ -14,7 +14,7 @@ export class Application {
     await Secrets.initialize();
     // establish database connection with mongoose.connect()
     this.databaseConnection = await mongoose.connect(
-      "mongodb+srv://raza8r:4KZT2u8i88lOxYNj@crm-cluster.bl1i8v3.mongodb.net/?retryWrites=true&w=majority"
+      "mongodb+srv://dawmthedev:Voltaic123@voltaiccrm.pvqe22d.mongodb.net/?retryWrites=true&w=majority"
     );
 
     try {

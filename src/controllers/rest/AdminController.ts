@@ -15,9 +15,9 @@ export class AdminController {
   @Get()
   @Returns(200, SuccessArrayResult).Of(AdminResultModel)
   public async getAllUsers(@BodyParams() body: { orgId: string }, @Context() context: Context) {
-    const { orgId } = await this.adminService.checkPermissions({ hasRole: [ADMIN] }, context.get("user"));
-    if (!orgId) throw new BadRequest(ORG_NOT_FOUND);
-    const admins = await this.adminService.findAdminsByOrgId(orgId);
+    // const { orgId } = await this.adminService.checkPermissions({ hasRole: [ADMIN] }, context.get("user"));
+    // if (!orgId) throw new BadRequest(ORG_NOT_FOUND);
+    const admins = await this.adminService.findAdmins();
     const response = {
       admins: admins.map((admin) => {
         return {
@@ -26,7 +26,7 @@ export class AdminController {
           role: admin.role || "",
           twoFactorEnabled: admin.twoFactorEnabled,
           orgId: admin.orgId || "",
-          company: "crm"
+          company: "Voltaic LLC"
         };
       })
     };

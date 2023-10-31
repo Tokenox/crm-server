@@ -3,7 +3,14 @@ import { Controller, Inject } from "@tsed/di";
 import { BadRequest, Forbidden, NotFound, Unauthorized } from "@tsed/exceptions";
 import { Enum, Post, Property, Required, Returns, Put, Get } from "@tsed/schema";
 import { ADMIN_NOT_FOUND, EMAIL_EXISTS, EMAIL_NOT_EXISTS, INCORRECT_PASSWORD, INVALID_TOKEN, MISSING_PARAMS } from "../../util/errors";
-import { SuccessMessageModel, VerificationSuccessModel, IsVerificationTokenCompleteModel, AdminResultModel } from "../../models/RestModels";
+import {
+  SuccessMessageModel,
+  VerificationSuccessModel,
+  IsVerificationTokenCompleteModel,
+  AdminResultModel,
+  CrmDealResultModel,
+  CrmPayrollResultModel
+} from "../../models/RestModels";
 import { SuccessResult } from "../../util/entities";
 import { VerificationService } from "../../services/VerificationService";
 import { AdminService } from "../../services/AdminService";
@@ -50,6 +57,23 @@ class RegisterOrgParams {
   @Property() public readonly verificationToken: string;
 }
 
+class CrmDealsBody {
+  @Required() public readonly recordId: string;
+}
+
+export class CrmDealResultCollection {
+  @Property() public deals: CrmDealResultModel[];
+}
+
+class CrmPayBody {
+  @Required() public readonly recordId: string;
+}
+
+export class CrmPayrollResultCollection {
+  @Property(CrmPayrollResultModel)
+  public readonly payrollData: CrmPayrollResultModel[];
+}
+
 const isSecure = process.env.NODE_ENV === "production";
 @Controller("/auth")
 export class AuthenticationController {
@@ -78,6 +102,7 @@ export class AuthenticationController {
       email,
       code: verificationData.code
     });
+
     return new SuccessResult({ success: true, message: "Verification Code sent successfully" }, SuccessMessageModel);
   }
 
@@ -152,6 +177,188 @@ export class AuthenticationController {
       },
       AdminResultModel
     );
+  }
+
+  @Post("/crmPayroll")
+  @Returns(200, SuccessResult).Of(CrmPayrollResultModel)
+  public async crmPayroll(@BodyParams() body: CrmPayBody, @Response() res: Response) {
+    const { recordId } = body;
+    CrmPayBody;
+    if (!recordId) throw new BadRequest(MISSING_PARAMS);
+
+    const API_URL = "https://voltaicqbapi.herokuapp.com/CRMPayroll";
+
+    const requestBody = {
+      repID: recordId
+    };
+
+    const headers = {
+      "Content-Type": "application/json"
+    };
+
+    console.log("Getting CRM Payroll...");
+    console.log(recordId);
+
+    const response = await axios.post(API_URL, requestBody, { headers });
+
+    const data = response.data;
+    const dataArray = Array.isArray(data) ? data : [data];
+    console.log(typeof data);
+
+    // const payrollResults = dataArray.map((record) => ({
+    //   lead: record["lead"] ? record["lead"].replace(/"/g, '') : null,
+    //   userStatus: record["userStatus"] ? record["userStatus"].replace(/"/g, '') : null,
+    //   salesRep: record["salesRep"] ? record["salesRep"].replace(/"/g, '') : null,
+    //   ppwFinal: record["ppwFinal"] ?  record["ppwFinal"]  : null,
+    //   status: record["systemSizeFinal"] ? record["systemSizeFinal"]  : null,
+    //   milestone: record["milestone"] ? record["milestone"].replace(/"/g, '') : null,
+    //   datePaid: record["datePaid"] ? record["datePaid"].replace(/"/g, '') : null,
+    //   amount: record["amount"] ? record["amount"] : null,
+    //   // Add other properties here as needed
+    // }));
+
+    const payrollResults = dataArray.map((record) => ({
+      lead: record["lead"] ? record["lead"].replace(/"/g, "") : null,
+      userStatus: record["userStatus"] ? record["userStatus"].replace(/"/g, "") : null,
+      itemType: record["itemType"] ? record["itemType"].replace(/"/g, "") : null,
+      saleDate: record["saleDate"] ? record["saleDate"].replace(/"/g, "") : null,
+      relatedContractAmount: record["relatedContractAmount"] ? record["relatedContractAmount"].replace(/"/g, "") : null,
+      relatedDealerFee: record["relatedDealerFee"] ? record["relatedDealerFee"].replace(/"/g, "") : null,
+      addersFinal: record["addersFinal"] ? record["addersFinal"].replace(/"/g, "") : null,
+      systemSizeFinal: record["systemSizeFinal"] ? record["systemSizeFinal"] : null,
+      recordID: record["recordID"] ? record["recordID"].replace(/"/g, "") : null,
+      saleStatus: record["saleStatus"] ? record["saleStatus"].replace(/"/g, "") : null,
+      clawbackNotes: record["clawbackNotes"] ? record["clawbackNotes"].replace(/"/g, "") : null,
+      repRedline: record["repRedline"] ? record["repRedline"].replace(/"/g, "") : null,
+      repRedlineOverrride: record["repRedlineOverrride"] ? record["repRedlineOverrride"].replace(/"/g, "") : null,
+      leadgenRedlineOverrride: record["leadgenRedlineOverrride"] ? record["leadgenRedlineOverrride"].replace(/"/g, "") : null,
+      salesRep: record["salesRep"] ? record["salesRep"].replace(/"/g, "") : null,
+      ppwFinal: record["ppwFinal"] ? record["ppwFinal"] : null,
+      status: record["status"] ? record["status"] : null,
+      milestone: record["milestone"] ? record["milestone"].replace(/"/g, "") : null,
+      datePaid: record["datePaid"] ? record["datePaid"].replace(/"/g, "") : null,
+      amount: record["amount"] ? record["amount"] : null
+    }));
+
+    console.log("Returning CRM payroll data...");
+
+    return new SuccessResult({ payrollData: payrollResults }, CrmPayrollResultCollection);
+  }
+
+  @Post("/crmPayrollLeadgen")
+  @Returns(200, SuccessResult).Of(CrmPayrollResultModel)
+  public async crmPayrollLeadgen(@BodyParams() body: CrmPayBody, @Response() res: Response) {
+    const { recordId } = body;
+    CrmPayBody;
+    if (!recordId) throw new BadRequest(MISSING_PARAMS);
+
+    const API_URL = "https://voltaicqbapi.herokuapp.com/CRMPayrollLeadGen";
+
+    const requestBody = {
+      repID: recordId
+    };
+
+    const headers = {
+      "Content-Type": "application/json"
+    };
+
+    console.log("Getting CRM Payroll...");
+    console.log(recordId);
+
+    const response = await axios.post(API_URL, requestBody, { headers });
+
+    const data = response.data;
+    const dataArray = Array.isArray(data) ? data : [data];
+    console.log(typeof data);
+
+    // const payrollResults = dataArray.map((record) => ({
+    //   lead: record["lead"] ? record["lead"].replace(/"/g, '') : null,
+    //   userStatus: record["userStatus"] ? record["userStatus"].replace(/"/g, '') : null,
+    //   salesRep: record["salesRep"] ? record["salesRep"].replace(/"/g, '') : null,
+    //   ppwFinal: record["ppwFinal"] ?  record["ppwFinal"]  : null,
+    //   status: record["systemSizeFinal"] ? record["systemSizeFinal"]  : null,
+    //   milestone: record["milestone"] ? record["milestone"].replace(/"/g, '') : null,
+    //   datePaid: record["datePaid"] ? record["datePaid"].replace(/"/g, '') : null,
+    //   amount: record["amount"] ? record["amount"] : null,
+    //   // Add other properties here as needed
+    // }));
+
+    const payrollResults = dataArray.map((record) => ({
+      lead: record["lead"] ? record["lead"].replace(/"/g, "") : null,
+      userStatus: record["userStatus"] ? record["userStatus"].replace(/"/g, "") : null,
+      itemType: record["itemType"] ? record["itemType"].replace(/"/g, "") : null,
+      saleDate: record["saleDate"] ? record["saleDate"].replace(/"/g, "") : null,
+      relatedContractAmount: record["relatedContractAmount"] ? record["relatedContractAmount"].replace(/"/g, "") : null,
+      relatedDealerFee: record["relatedDealerFee"] ? record["relatedDealerFee"].replace(/"/g, "") : null,
+      addersFinal: record["addersFinal"] ? record["addersFinal"].replace(/"/g, "") : null,
+      systemSizeFinal: record["systemSizeFinal"] ? record["systemSizeFinal"] : null,
+      recordID: record["recordID"] ? record["recordID"].replace(/"/g, "") : null,
+      saleStatus: record["saleStatus"] ? record["saleStatus"].replace(/"/g, "") : null,
+      clawbackNotes: record["clawbackNotes"] ? record["clawbackNotes"].replace(/"/g, "") : null,
+      repRedline: record["repRedline"] ? record["repRedline"].replace(/"/g, "") : null,
+      repRedlineOverrride: record["repRedlineOverrride"] ? record["repRedlineOverrride"].replace(/"/g, "") : null,
+      leadgenRedlineOverrride: record["leadgenRedlineOverrride"] ? record["leadgenRedlineOverrride"].replace(/"/g, "") : null,
+      salesRep: record["salesRep"] ? record["salesRep"].replace(/"/g, "") : null,
+      ppwFinal: record["ppwFinal"] ? record["ppwFinal"] : null,
+      status: record["status"] ? record["status"] : null,
+      milestone: record["milestone"] ? record["milestone"].replace(/"/g, "") : null,
+      datePaid: record["datePaid"] ? record["datePaid"].replace(/"/g, "") : null,
+      amount: record["amount"] ? record["amount"] : null
+    }));
+
+    console.log("Returning CRM payroll data...");
+
+    return new SuccessResult({ payrollData: payrollResults }, CrmPayrollResultCollection);
+  }
+
+  @Post("/crmDeals")
+  @Returns(200, SuccessResult).Of(CrmDealResultModel)
+  public async crmDeals(@BodyParams() body: CrmDealsBody, @Response() res: Response) {
+    const { recordId } = body;
+    CrmPayBody;
+    if (!recordId) throw new BadRequest(MISSING_PARAMS);
+
+    const API_URL = "https://voltaicqbapi.herokuapp.com/CRMDeals";
+
+    const requestBody = {
+      repID: recordId
+    };
+
+    const headers = {
+      "Content-Type": "application/json"
+    };
+
+    console.log("Getting CRM users...");
+
+    const response = await axios.post(API_URL, requestBody, { headers });
+
+    const data = response.data;
+
+    const dataArray = Array.isArray(data) ? data : [data];
+
+    console.log(dataArray);
+
+    // Map over dataArray and transform its structure
+    const results = dataArray.map((project) => {
+      return {
+        email: project["email"] ? project["email"] : null,
+        projectID: project["projectID"] || "",
+        repName: project["repName"] || "sss",
+        homeownerName: project["homeownerName"] || null,
+        salesRep: project["salesRep"] || "crm",
+        leadGen: project["leadGenerator"] || "crm",
+        saleDate: project["saleDate"] || "sessionCookie",
+        ppwFinal: project["ppwFinal"] || null,
+        systemSizeFinal: project["systemSizeFinal"] || null,
+        stage: project["stage"] || "",
+        status: project["status"] || "",
+        milestone: project["milestone"] || null,
+        datePaid: project["datePaid"] || null,
+        amount: project["amount"] || null
+      };
+    });
+
+    return new SuccessResult({ deals: results }, CrmDealResultCollection);
   }
 
   @Put("/reset-password")
