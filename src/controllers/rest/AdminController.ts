@@ -6,6 +6,7 @@ import { ORG_NOT_FOUND } from "../../util/errors";
 import { AdminResultModel } from "../../models/RestModels";
 import { AdminService } from "../../services/AdminService";
 import { SuccessArrayResult } from "../../util/entities";
+import { ADMIN } from "../../util/constants";
 
 @Controller("/admin")
 export class AdminController {
@@ -14,8 +15,8 @@ export class AdminController {
   @Get()
   @Returns(200, SuccessArrayResult).Of(AdminResultModel)
   public async getAllUsers(@BodyParams() body: { orgId: string }, @Context() context: Context) {
-    const { orgId } = await this.adminService.checkPermissions({ hasRole: ["admin"] }, context.get("user"));
-    if(!orgId) throw new BadRequest(ORG_NOT_FOUND);
+    const { orgId } = await this.adminService.checkPermissions({ hasRole: [ADMIN] }, context.get("user"));
+    if (!orgId) throw new BadRequest(ORG_NOT_FOUND);
     const admins = await this.adminService.findAdminsByOrgId(orgId);
     const response = {
       admins: admins.map((admin) => {

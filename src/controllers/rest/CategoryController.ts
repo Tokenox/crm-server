@@ -26,8 +26,8 @@ export class CategoryController {
   @Get("/")
   @Returns(200, SuccessArrayResult).Of(CategoryResultModel)
   public async getCategories(@Context() context: Context) {
-    // const { orgId } = await this.adminService.checkPermissions({ hasRole: [ADMIN, MANAGER] }, context.get("user"));
-    // if (!orgId) throw new BadRequest(ORG_NOT_FOUND);
+    const { orgId } = await this.adminService.checkPermissions({ hasRole: [ADMIN, MANAGER] }, context.get("user"));
+    if (!orgId) throw new BadRequest(ORG_NOT_FOUND);
     const categories = await this.categoryService.findCategories();
     const response = categories.map((category) => {
       return {
@@ -47,8 +47,8 @@ export class CategoryController {
   @Get("/:id")
   @Returns(200, SuccessResult).Of(CategoryResultModel)
   public async getCategory(@PathParams() { id }: IdModel, @Context() context: Context) {
-    // const { orgId, email } = await this.adminService.checkPermissions({ hasRole: [ADMIN, MANAGER] }, context.get("user"));
-    // if (!orgId) throw new BadRequest(ORG_NOT_FOUND);
+    const { orgId, email } = await this.adminService.checkPermissions({ hasRole: [ADMIN, MANAGER] }, context.get("user"));
+    if (!orgId) throw new BadRequest(ORG_NOT_FOUND);
     const category = await this.categoryService.findCategoryById(id);
     return new SuccessResult({ ...category?.toObject()!, id: category?._id }, CategoryResultModel);
   }
