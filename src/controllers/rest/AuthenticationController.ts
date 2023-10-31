@@ -68,9 +68,14 @@ export class AuthenticationController {
     const findAdmin = await this.adminService.findAdminByEmail(email);
     if (type === VerificationEnum.PASSWORD && !findAdmin) throw new BadRequest(EMAIL_NOT_EXISTS);
     const verificationData = await this.verificationService.generateVerification({ email, type });
+    const response = await axios.post("https://voltaicqbapi.herokuapp.com/CRMAuth", {
+      repEmail: email
+    });
+    if (response.data.recordID == "00000") throw new Unauthorized("Email is not authorized in Quickbase");
+    if (!response.data.recordID) throw new NotFound("Invalid qbId received from the API.");
     await NodemailerClient.sendVerificationEmail({
       title: type || "Email",
-      email: "raza8r@gmail.com",
+      email,
       code: verificationData.code
     });
     return new SuccessResult({ success: true, message: "Verification Code sent successfully" }, SuccessMessageModel);
