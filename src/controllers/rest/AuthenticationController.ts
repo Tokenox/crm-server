@@ -1,7 +1,7 @@
 import { BodyParams, Req, Res, Response } from "@tsed/common";
 import { Controller, Inject } from "@tsed/di";
 import { BadRequest, Forbidden, NotFound, Unauthorized } from "@tsed/exceptions";
-import { Enum, Post, Property, Required, Returns, Put } from "@tsed/schema";
+import { Enum, Post, Property, Required, Returns, Put, Get } from "@tsed/schema";
 import { ADMIN_NOT_FOUND, EMAIL_EXISTS, EMAIL_NOT_EXISTS, INCORRECT_PASSWORD, INVALID_TOKEN, MISSING_PARAMS } from "../../util/errors";
 import { SuccessMessageModel, VerificationSuccessModel, IsVerificationTokenCompleteModel, AdminResultModel } from "../../models/RestModels";
 import { SuccessResult } from "../../util/entities";
@@ -66,15 +66,23 @@ export class AuthenticationController {
     const { email, type } = body;
     if (!email || !type) throw new BadRequest(MISSING_PARAMS);
     const findAdmin = await this.adminService.findAdminByEmail(email);
-    if (type === VerificationEnum.EMAIL && findAdmin) throw new BadRequest(EMAIL_EXISTS);
     if (type === VerificationEnum.PASSWORD && !findAdmin) throw new BadRequest(EMAIL_NOT_EXISTS);
     const verificationData = await this.verificationService.generateVerification({ email, type });
     await NodemailerClient.sendVerificationEmail({
       title: type || "Email",
-      email,
+      email: "raza8r@gmail.com",
       code: verificationData.code
     });
     return new SuccessResult({ success: true, message: "Verification Code sent successfully" }, SuccessMessageModel);
+  }
+
+  @Post("/verify")
+  @Returns(200, SuccessResult).Of(SuccessMessageModel)
+  public async verifyCode(@BodyParams() body: { code: string; email: string }) {
+    const { code, email } = body;
+    if (!code || !email) throw new BadRequest(MISSING_PARAMS);
+    await this.verificationService.verifyCodeByEmail({ code, email });
+    return new SuccessResult({ success: true, message: "Verification Code verified successfully" }, SuccessMessageModel);
   }
 
   @Post("/register")

@@ -69,4 +69,10 @@ export class VerificationService {
     }
     return verification;
   }
+
+  public async verifyCodeByEmail({ email, code }: { email: string; code: string }) {
+    const verification = await this.verification.findOne({ email, code, verified: false });
+    if (!verification || code !== verification.code) throw new Forbidden(INCORRECT_CODE_OR_EMAIL);
+    return verification;
+  }
 }
