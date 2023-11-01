@@ -90,10 +90,14 @@ export class AuthenticationController {
     const { email, type } = body;
     if (!email || !type) throw new BadRequest(MISSING_PARAMS);
 
+
+    console.log("\n----- Registering --- " + email)
+
     const findAdmin = await this.adminService.findAdminByEmail(email);
     if (type === VerificationEnum.PASSWORD && !findAdmin) throw new BadRequest(EMAIL_NOT_EXISTS);
     const verificationData = await this.verificationService.generateVerification({ email, type });
-
+    console.log("\n----- verificationData --- " + verificationData)
+    
     const response = await axios.post("https://voltaicqbapi.herokuapp.com/CRMAuth", {
       repEmail: email
     });
@@ -351,12 +355,17 @@ export class AuthenticationController {
         homeownerName: project["homeownerName"] || null,
         salesRep: project["salesRep"] || "crm",
         leadGen: project["leadGenerator"] || "crm",
-        saleDate: project["saleDate"] || "sessionCookie",
+        saleDate: project["saleDate"] ||null,
         ppwFinal: project["ppwFinal"] || null,
         systemSizeFinal: project["systemSizeFinal"] || null,
         stage: project["stage"] || "",
         status: project["status"] || "",
         milestone: project["milestone"] || null,
+
+        plansReceived: project["plansReceived"] || null,
+        installComplete: project["installComplete"] || null,
+        ptoApproved: project["ptoApproved"] || null,
+        
         datePaid: project["datePaid"] || null,
         amount: project["amount"] || null
       };

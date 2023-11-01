@@ -77,6 +77,9 @@ export class LeadResultModel {
 export class CrmDealResultModel {
   @Property() public readonly email: string;
   @Property() public readonly projectID: string;
+  @Property() public readonly plansReceived: string;
+  @Property() public readonly installComplete: string;
+  @Property() public readonly ptoApproved: string;
   @Property() public readonly homeownerName: string;
   @Property() public readonly repName: string;
   @Property() public readonly saleDate: string;
