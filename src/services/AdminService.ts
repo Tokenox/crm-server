@@ -45,7 +45,7 @@ export class AdminService {
   }
 
   public async findAdminByEmail(email: string) {
-    return await this.admin.findOne({ email });
+    return await this.admin.findOne({ email: email.trim().toLowerCase() });
   }
 
   public async updateAdminAuth(adminId: string, twoFactorEnabled: boolean) {
@@ -67,7 +67,7 @@ export class AdminService {
   }) {
     const { email, name, password, organizationId, role, recordID } = params;
     return await this.admin.create({
-      email,
+      email: email.trim().toLowerCase(),
       name,
       role,
       recordID,
