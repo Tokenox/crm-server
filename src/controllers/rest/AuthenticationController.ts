@@ -9,6 +9,7 @@ import {
   IsVerificationTokenCompleteModel,
   AdminResultModel,
   CrmDealResultModel,
+  SingleCrmDealResultModel,
   CrmPayrollResultModel
 } from "../../models/RestModels";
 import { SuccessResult } from "../../util/entities";
@@ -61,6 +62,10 @@ class CrmDealsBody {
   @Required() public readonly recordId: string;
 }
 
+export class SingleCrmDealResultCollection {
+  @Property() public deals: SingleCrmDealResultModel[];
+}
+
 export class CrmDealResultCollection {
   @Property() public deals: CrmDealResultModel[];
 }
@@ -103,7 +108,6 @@ export class AuthenticationController {
       email,
       code: verificationData.code
     });
-
     return new SuccessResult({ success: true, message: "Verification Code sent successfully" }, SuccessMessageModel);
   }
 
@@ -368,6 +372,77 @@ export class AuthenticationController {
     return new SuccessResult({ deals: results }, CrmDealResultCollection);
   }
 
+// SINGLE CRM DEAL
+
+
+@Post("/crmDeal")
+@Returns(200, SuccessResult).Of(SingleCrmDealResultModel)
+public async crmDeal(@BodyParams() body: CrmDealsBody, @Response() res: Response) {
+  const { recordId } = body;
+  CrmPayBody;
+  if (!recordId) throw new BadRequest(MISSING_PARAMS);
+
+  const API_URL = "https://voltaicqbapi.herokuapp.com/CRMDeal";
+
+  const requestBody = {
+    repID: recordId
+  };
+
+  const headers = {
+    "Content-Type": "application/json"
+  };
+
+  console.log("Getting CRM deal...");
+
+  const response = await axios.post(API_URL, requestBody, { headers });
+  if (!response || !response.data) throw new BadRequest("Invalid response from Quickbase API");
+
+  const data = response.data;
+
+  // Transform the structure as needed
+  const result = {
+    email: data["email"] ? data["email"] : null,
+    projectID: data["projectID"] || "",
+    repName: data["repName"] || "sss",
+    homeownerName: data["homeownerName"] || null,
+    salesRep: data["salesRep"] || "crm",
+    leadGen: data["leadGenerator"] || "crm",
+    saleDate: data["saleDate"] || null,
+    ppwFinal: data["ppwFinal"] || null,
+    systemSizeFinal: data["systemSizeFinal"] || null,
+    stage: data["stage"] || "",
+    status: data["status"] || "",
+    milestone: data["milestone"] || null,
+    plansReceived: data["plansReceived"] || null,
+    installComplete: data["installComplete"] || null,
+    ptoApproved: data["ptoApproved"] || null,
+    datePaid: data["datePaid"] || null,
+    amount: data["amount"] || null,
+    vcmessages: data["vcmessages"] || [], // Assuming vcmessages field exists and is an array
+  };
+
+  const singleCrmDealResultModel = new SingleCrmDealResultModel(result); // Pass the result object as a single parameter
+
+  return new SuccessResult(singleCrmDealResultModel, SingleCrmDealResultModel);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  //CRM DEALS 
+
   @Post("/crmDeals")
   @Returns(200, SuccessResult).Of(CrmDealResultModel)
   public async crmDeals(@BodyParams() body: CrmDealsBody, @Response() res: Response) {
@@ -424,6 +499,15 @@ export class AuthenticationController {
     return new SuccessResult({ deals: results }, CrmDealResultCollection);
   }
 
+
+
+
+
+
+
+
+
+  
   @Put("/reset-password")
   @Returns(200, SuccessResult).Of(SuccessMessageModel)
   public async resetPassword(@BodyParams() body: UpdateAdminPasswordParams) {

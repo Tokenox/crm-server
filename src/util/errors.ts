@@ -26,6 +26,7 @@ export const ORGANIZATION_NAME_ALREADY_EXISTS = "ORGANIZATION_NAME_ALREADY_EXIST
 export const ADMIN_ALREADY_EXISTS = "ADMIN_ALREADY_EXISTS";
 export const CATEGORY_ALREADY_EXISTS = "CATEGORY_ALREADY_EXISTS";
 export const CATEGORY_NOT_FOUND = "CATEGORY_NOT_FOUND";
+export const INVALID_RESPONSE_QUICKBASE = "INVALID_RESPONSE_QUICKBASE";
 
 export const errorMap: { [key: string]: string } = {
   SOMETHING_WENT_WRONG: "Looks like something is wrong, we are working to fix it.",
@@ -56,5 +57,6 @@ export const errorMap: { [key: string]: string } = {
   ORGANIZATION_NAME_ALREADY_EXISTS: "Organization already exists with this name.",
   ADMIN_ALREADY_EXISTS: "Admin already exists with this email.",
   CATEGORY_ALREADY_EXISTS: "Category already exists with this name.",
-  CATEGORY_NOT_FOUND: "Category not found."
+  CATEGORY_NOT_FOUND: "Category not found.",
+  INVALID_RESPONSE_QUICKBASE: "Invalid response from quickbase."
 };

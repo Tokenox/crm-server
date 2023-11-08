@@ -74,6 +74,80 @@ export class LeadResultModel {
   @Property() public readonly updatedAt: Date;
 }
 
+export class SingleCrmDealResultModel {
+  @Property() public readonly email: string;
+  @Property() public readonly projectID: string;
+  @Property() public readonly plansReceived: string;
+  @Property() public readonly installComplete: string;
+  @Property() public readonly ptoApproved: string;
+  @Property() public readonly homeownerName: string;
+  @Property() public readonly repName: string;
+  @Property() public readonly saleDate: string;
+  @Property() public readonly leadGen: string;
+  @Property() public readonly salesRep: string;
+  @Property() public readonly ppwFinal: string;
+  @Property() public readonly systemSizeFinal: string;
+  @Property() public readonly stage: string;
+  @Property() public readonly status: string;
+  @Property() public readonly milestone: string;
+  @Property() public readonly datePaid: string;
+  @Property() public readonly amount: string;
+  @Property() public readonly vcmessages: {
+    relatedProject: string;
+    type: string;
+    text: string;
+    createdAt: string;
+  }[]; // Define vcmessages as an array of objects
+
+  constructor(data: {
+    email: string;
+    projectID: string;
+    plansReceived: string;
+    installComplete: string;
+    ptoApproved: string;
+    homeownerName: string;
+    repName: string;
+    saleDate: string;
+    leadGen: string;
+    salesRep: string;
+    ppwFinal: string;
+    systemSizeFinal: string;
+    stage: string;
+    status: string;
+    milestone: string;
+    datePaid: string;
+    amount: string;
+    vcmessages: {
+      relatedProject: string;
+      type: string;
+      text: string;
+      createdAt: string;
+    }[]; // Define vcmessages as an array of objects
+  }) {
+    this.email = data.email;
+    this.projectID = data.projectID;
+    this.plansReceived = data.plansReceived;
+    this.installComplete = data.installComplete;
+    this.ptoApproved = data.ptoApproved;
+    this.homeownerName = data.homeownerName;
+    this.repName = data.repName;
+    this.saleDate = data.saleDate;
+    this.leadGen = data.leadGen;
+    this.salesRep = data.salesRep;
+    this.ppwFinal = data.ppwFinal;
+    this.systemSizeFinal = data.systemSizeFinal;
+    this.stage = data.stage;
+    this.status = data.status;
+    this.milestone = data.milestone;
+    this.datePaid = data.datePaid;
+    this.amount = data.amount;
+    this.vcmessages = data.vcmessages;
+  }
+}
+
+
+
+
 export class CrmDealResultModel {
   @Property() public readonly email: string;
   @Property() public readonly projectID: string;
