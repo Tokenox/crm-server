@@ -384,8 +384,10 @@ public async crmDeal(@BodyParams() body: CrmDealsBody, @Response() res: Response
 
   const API_URL = "https://voltaicqbapi.herokuapp.com/CRMDeal";
 
+
+  ///Deal ID changed here! 
   const requestBody = {
-    repID: recordId
+    dealID: recordId
   };
 
   const headers = {
