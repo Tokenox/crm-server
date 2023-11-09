@@ -95,8 +95,18 @@ export class SingleCrmDealResultModel {
   @Property() public readonly vcmessages: {
     relatedProject: string;
     type: string;
+    from: string;
     text: string;
     createdAt: string;
+  }[]; // Define vcmessages as an array of objects
+
+  @Property() public readonly vcadders: {
+    relatedProject: string;
+    description: string;
+    quantity: string;
+    price: string;
+    status: string;
+    billTo: string;
   }[]; // Define vcmessages as an array of objects
 
   constructor(data: {
@@ -120,8 +130,17 @@ export class SingleCrmDealResultModel {
     vcmessages: {
       relatedProject: string;
       type: string;
+      from: string;
       text: string;
       createdAt: string;
+    }[]; // Define vcmessages as an array of objects
+    vcadders: {
+      relatedProject: string;
+      description: string;
+      quantity: string;
+      price: string;
+      status: string;
+      billTo: string;
     }[]; // Define vcmessages as an array of objects
   }) {
     this.email = data.email;
@@ -142,6 +161,7 @@ export class SingleCrmDealResultModel {
     this.datePaid = data.datePaid;
     this.amount = data.amount;
     this.vcmessages = data.vcmessages;
+    this.vcadders = data.vcadders;
   }
 }
 

@@ -384,6 +384,7 @@ public async crmDeal(@BodyParams() body: CrmDealsBody, @Response() res: Response
 
   const API_URL = "https://voltaicqbapi.herokuapp.com/CRMDeal";
 
+  
 
   ///Deal ID changed here! 
   const requestBody = {
@@ -420,7 +421,8 @@ public async crmDeal(@BodyParams() body: CrmDealsBody, @Response() res: Response
     ptoApproved: data["ptoApproved"] || null,
     datePaid: data["datePaid"] || null,
     amount: data["amount"] || null,
-    vcmessages: data["vcmessages"] || [], // Assuming vcmessages field exists and is an array
+    vcmessages: data["vcmessages"] || [],// Assuming vcmessages field exists and is an array
+    vcadders: data["vcAdders"] || [],  // Assuming vcmadders field exists and is an array
   };
 
   const singleCrmDealResultModel = new SingleCrmDealResultModel(result); // Pass the result object as a single parameter
@@ -431,20 +433,7 @@ public async crmDeal(@BodyParams() body: CrmDealsBody, @Response() res: Response
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
   //CRM DEALS 
-
   @Post("/crmDeals")
   @Returns(200, SuccessResult).Of(CrmDealResultModel)
   public async crmDeals(@BodyParams() body: CrmDealsBody, @Response() res: Response) {
@@ -488,11 +477,9 @@ public async crmDeal(@BodyParams() body: CrmDealsBody, @Response() res: Response
         stage: project["stage"] || "",
         status: project["status"] || "",
         milestone: project["milestone"] || null,
-
         plansReceived: project["plansReceived"] || null,
         installComplete: project["installComplete"] || null,
         ptoApproved: project["ptoApproved"] || null,
-
         datePaid: project["datePaid"] || null,
         amount: project["amount"] || null
       };
