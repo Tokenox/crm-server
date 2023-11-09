@@ -167,6 +167,15 @@ export class SingleCrmDealResultModel {
 
 
 
+export class CrmRateResultModel {
+  @Property() public readonly partner: string;
+  @Property() public readonly years: string;
+  @Property() public readonly status: string;
+  @Property() public readonly financing: string;
+  @Property() public readonly apr: string;
+  @Property() public readonly feerate: string;
+
+}
 
 export class CrmDealResultModel {
   @Property() public readonly email: string;

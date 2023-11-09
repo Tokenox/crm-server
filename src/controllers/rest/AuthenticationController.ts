@@ -9,6 +9,7 @@ import {
   IsVerificationTokenCompleteModel,
   AdminResultModel,
   CrmDealResultModel,
+  CrmRateResultModel,
   SingleCrmDealResultModel,
   CrmPayrollResultModel
 } from "../../models/RestModels";
@@ -62,10 +63,19 @@ class CrmDealsBody {
   @Required() public readonly recordId: string;
 }
 
+class CrmRateBody {
+
+}
+
 export class SingleCrmDealResultCollection {
   @Property() public deals: SingleCrmDealResultModel[];
 }
 
+
+
+export class CrmRatesResultCollection {
+  @Property() public rates: CrmRateResultModel[];
+}
 export class CrmDealResultCollection {
   @Property() public deals: CrmDealResultModel[];
 }
@@ -429,6 +439,107 @@ public async crmDeal(@BodyParams() body: CrmDealsBody, @Response() res: Response
 
   return new SuccessResult(singleCrmDealResultModel, SingleCrmDealResultModel);
 }
+
+
+
+
+
+
+
+
+
+@Post("/crmRatesInActive")
+@Returns(200, SuccessResult).Of(CrmRateResultModel)
+public async crmRatesInActive(@Response() res: Response) {
+
+
+
+
+  const API_URL = "https://voltaicqbapi.herokuapp.com/CRMRatesInActive";
+
+ 
+  const headers = {
+    "Content-Type": "application/json"
+  };
+
+  console.log("Getting CRM users...");
+
+  const response = await axios.post(API_URL, {}, { headers });
+  if (!response || !response.data) throw new BadRequest("Invalid response from Quickbase API");
+
+  const data = response.data;
+
+  const dataArray = Array.isArray(data) ? data : [data];
+
+  console.log(dataArray);
+
+  // Map over dataArray and transform its structure
+  const results = dataArray.map((project) => {
+    return {
+      partner: project["fulfillmentPartner"] || null,
+      years: project["years"] || null,
+      status: project["status"] ||null,
+      financing: project["financing"] || null,
+      apr: project["apr"] ||null,
+      feerate: project["feeRate"] || null,
+   
+    };
+  });
+
+  return new SuccessResult({ rates: results }, CrmRatesResultCollection);
+}
+
+
+
+
+
+@Post("/crmRatesActive")
+@Returns(200, SuccessResult).Of(CrmRateResultModel)
+public async crmRatesActive(@Response() res: Response) {
+
+
+
+
+  const API_URL = "https://voltaicqbapi.herokuapp.com/CRMRatesActive";
+
+ 
+  const headers = {
+    "Content-Type": "application/json"
+  };
+
+  console.log("Getting CRM users...");
+
+  const response = await axios.post(API_URL, {}, { headers });
+  if (!response || !response.data) throw new BadRequest("Invalid response from Quickbase API");
+
+  const data = response.data;
+
+  const dataArray = Array.isArray(data) ? data : [data];
+
+  console.log(dataArray);
+
+  // Map over dataArray and transform its structure
+  const results = dataArray.map((project) => {
+    return {
+      partner: project["fulfillmentPartner"] ||  null,
+      years: project["years"] || null,
+      status: project["status"] ||null,
+      financing: project["financing"] || null,
+      apr: project["apr"] ||null,
+      feerate: project["feeRate"] || null,
+   
+    };
+  });
+
+  return new SuccessResult({ rates: results }, CrmRatesResultCollection);
+}
+
+
+
+
+
+
+
 
 
 
