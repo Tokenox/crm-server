@@ -8,11 +8,13 @@ import {
   VerificationSuccessModel,
   IsVerificationTokenCompleteModel,
   AdminResultModel,
+  AIResponseModel,
   CrmDealResultModel,
   CrmRateResultModel,
   SingleCrmDealResultModel,
   CrmPayrollResultModel
 } from "../../models/RestModels";
+import { openAIService } from "../../helper/OpenAIService";
 import { SuccessResult } from "../../util/entities";
 import { VerificationService } from "../../services/VerificationService";
 import { AdminService } from "../../services/AdminService";
@@ -75,6 +77,11 @@ export class SingleCrmDealResultCollection {
 
 export class CrmRatesResultCollection {
   @Property() public rates: CrmRateResultModel[];
+}
+
+
+class AIResponseCollection {
+  @Property() public responses: AIResponseModel[];
 }
 export class CrmDealResultCollection {
   @Property() public deals: CrmDealResultModel[];
@@ -440,10 +447,28 @@ public async crmDeal(@BodyParams() body: CrmDealsBody, @Response() res: Response
   return new SuccessResult(singleCrmDealResultModel, SingleCrmDealResultModel);
 }
 
+@Post("/askOpenAI")
+@Returns(200, SuccessResult).Of(AIResponseModel)
+public async askOpenAI(@BodyParams() body: any, @Response() res: Response) {
+  try {
+    // Extract the question from the request body
+    const userQuestion = body.question;
 
+    // Assuming openAIService.askQuestion is correctly implemented
+    const aiResponseText = await openAIService.askQuestion(userQuestion);
 
+    // Create an instance of AIResponseModel
+    const responseModel = new AIResponseModel();
+    responseModel.response = aiResponseText;
 
-
+    // Return the response wrapped in a SuccessResult
+    // Pass the instance and the class (constructor) for serialization
+    return new SuccessResult(responseModel, AIResponseModel);
+  } catch (error) {
+    console.error(error);
+    throw new BadRequest("Error processing your question");
+  }
+}
 
 
 

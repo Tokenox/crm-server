@@ -176,6 +176,10 @@ export class CrmRateResultModel {
   @Property() public readonly feerate: string;
 
 }
+export class AIResponseModel {
+  @Property() public response: string; // removed the readonly modifier
+}
+
 
 export class CrmDealResultModel {
   @Property() public readonly email: string;
