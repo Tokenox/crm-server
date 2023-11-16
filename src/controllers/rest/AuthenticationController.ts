@@ -249,6 +249,7 @@ export class AuthenticationController {
       addersFinal: record["addersFinal"] ? record["addersFinal"].replace(/"/g, "") : null,
       systemSizeFinal: record["systemSizeFinal"] ? record["systemSizeFinal"] : null,
       recordID: record["recordID"] ? record["recordID"].replace(/"/g, "") : null,
+      relatedProject: record["relatedProject"] ? record["relatedProject"] : null,
       saleStatus: record["saleStatus"] ? record["saleStatus"].replace(/"/g, "") : null,
       clawbackNotes: record["clawbackNotes"] ? record["clawbackNotes"].replace(/"/g, "") : null,
       repRedline: record["repRedline"] ? record["repRedline"].replace(/"/g, "") : null,
