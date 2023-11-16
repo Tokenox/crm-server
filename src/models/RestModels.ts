@@ -180,7 +180,26 @@ export class AIResponseModel {
   @Property() public response: string; // removed the readonly modifier
 }
 
+export class CrmDealRookieResultModel {
+  @Property() public readonly email: string;
+  @Property() public readonly projectID: string;
+  @Property() public readonly plansReceived: string;
+  @Property() public readonly installComplete: string;
+  @Property() public readonly ptoApproved: string;
+  @Property() public readonly homeownerName: string;
+  @Property() public readonly repName: string;
+  @Property() public readonly saleDate: string;
+  @Property() public readonly leadGen: string;
+  @Property() public readonly salesRep: string;
+  @Property() public readonly ppwFinal: string;
+  @Property() public readonly systemSizeFinal: string;
+  @Property() public readonly stage: string;
+  @Property() public readonly status: string;
+  @Property() public readonly milestone: string;
+  @Property() public readonly datePaid: string;
+  @Property() public readonly amount: string;
 
+}
 export class CrmDealResultModel {
   @Property() public readonly email: string;
   @Property() public readonly projectID: string;
@@ -203,6 +222,7 @@ export class CrmDealResultModel {
 
 export class CrmPayrollResultModel {
   @Property() public readonly lead: string;
+  @Property() public readonly relatedProject: string;
   @Property() public readonly userStatus: string;
   @Property() public readonly itemType: string;
   @Property() public readonly saleDate: string;

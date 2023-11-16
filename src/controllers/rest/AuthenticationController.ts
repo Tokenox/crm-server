@@ -322,6 +322,7 @@ export class AuthenticationController {
       leadgenRedlineOverrride: record["leadgenRedlineOverrride"] ? record["leadgenRedlineOverrride"].replace(/"/g, "") : null,
       salesRep: record["salesRep"] ? record["salesRep"].replace(/"/g, "") : null,
       ppwFinal: record["ppwFinal"] ? record["ppwFinal"] : null,
+      relatedProject: record["relatedProject"] ? record["relatedProject"] : null,
       status: record["status"] ? record["status"] : null,
       milestone: record["milestone"] ? record["milestone"].replace(/"/g, "") : null,
       datePaid: record["datePaid"] ? record["datePaid"].replace(/"/g, "") : null,
@@ -331,6 +332,60 @@ export class AuthenticationController {
     console.log("Returning CRM payroll data...");
 
     return new SuccessResult({ payrollData: payrollResults }, CrmPayrollResultCollection);
+  }
+
+
+
+
+  @Post("/crmDealsRookie")
+  @Returns(200, SuccessResult).Of(CrmDealResultModel)
+  public async crmDealsRookie(@Response() res: Response) {
+
+    
+    const API_URL = "https://voltaicqbapi.herokuapp.com/CRMDealsRookie";
+
+ 
+    const headers = {
+      "Content-Type": "application/json"
+    };
+
+    console.log("Getting CRM users...");
+
+    const response = await axios.post(API_URL, {},{ headers });
+    if (!response || !response.data) throw new BadRequest("Invalid response from Quickbase API");
+
+    const data = response.data;
+
+    const dataArray = Array.isArray(data) ? data : [data];
+
+    console.log(dataArray);
+
+    // Map over dataArray and transform its structure
+    const results = dataArray.map((project) => {
+      return {
+        email: project["email"] ? project["email"] : null,
+        projectID: project["projectID"] || "",
+        repName: project["repName"] || "sss",
+        homeownerName: project["homeownerName"] || null,
+        salesRep: project["salesRep"] || "crm",
+        leadGen: project["leadGenerator"] || "crm",
+        saleDate: project["saleDate"] || null,
+        ppwFinal: project["ppwFinal"] || null,
+        systemSizeFinal: project["systemSizeFinal"] || null,
+        stage: project["stage"] || "",
+        status: project["status"] || "",
+        milestone: project["milestone"] || null,
+
+        plansReceived: project["plansReceived"] || null,
+        installComplete: project["installComplete"] || null,
+        ptoApproved: project["ptoApproved"] || null,
+
+        datePaid: project["datePaid"] || null,
+        amount: project["amount"] || null
+      };
+    });
+
+    return new SuccessResult({ deals: results }, CrmDealResultCollection);
   }
 
   @Post("/crmDealsLeadgen")
