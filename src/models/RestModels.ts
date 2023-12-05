@@ -176,6 +176,38 @@ export class CrmRateResultModel {
   @Property() public readonly feerate: string;
 
 }
+
+export class CrmTimelineAvgResultModel{
+  @Property() public readonly saleStage: string;
+  @Property() public readonly welcometage: string;
+  @Property() public readonly sstage: string;
+  @Property() public readonly ntpstage: string;
+  @Property() public readonly qcStage: string;
+  @Property() public readonly planStage: string;
+  @Property() public readonly flatage: string;
+  @Property() public readonly permitStage: string;
+  @Property() public readonly installStage: string;
+  @Property() public readonly inspectStage: string;
+  @Property() public readonly ptoStage: string;
+
+}
+
+export class CrmTimelineResultModel{
+  @Property() public readonly saleStage: string;
+  @Property() public readonly welcometage: string;
+  @Property() public readonly sstage: string;
+  @Property() public readonly ntpstage: string;
+  @Property() public readonly qcStage: string;
+  @Property() public readonly planStage: string;
+  @Property() public readonly flatage: string;
+  @Property() public readonly permitStage: string;
+  @Property() public readonly installStage: string;
+  @Property() public readonly inspectStage: string;
+  @Property() public readonly ptoStage: string;
+  @Property() public readonly AHJ: string;
+}
+
+
 export class AIResponseModel {
   @Property() public response: string; // removed the readonly modifier
 }
@@ -218,6 +250,8 @@ export class CrmDealResultModel {
   @Property() public readonly milestone: string;
   @Property() public readonly datePaid: string;
   @Property() public readonly amount: string;
+  @Property() public readonly installer: string;
+  @Property() public readonly financing: string;
 }
 
 export class CrmPayrollResultModel {

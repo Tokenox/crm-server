@@ -12,7 +12,9 @@ import {
   CrmDealResultModel,
   CrmRateResultModel,
   SingleCrmDealResultModel,
-  CrmPayrollResultModel
+  CrmPayrollResultModel,
+  CrmTimelineResultModel,
+  CrmTimelineAvgResultModel
 } from "../../models/RestModels";
 import { openAIService } from "../../helper/OpenAIService";
 import { SuccessResult } from "../../util/entities";
@@ -80,6 +82,22 @@ export class CrmRatesResultCollection {
 }
 
 
+
+
+export class Avgtimeline{
+  @Property() public timeline: CrmTimelineAvgResultModel;
+
+  
+}
+
+
+
+export class AhjTimeline{
+  @Property() public timeline: CrmTimelineResultModel[];
+
+  
+}
+
 class AIResponseCollection {
   @Property() public responses: AIResponseModel[];
 }
@@ -91,6 +109,11 @@ class CrmPayBody {
   @Required() public readonly recordId: string;
 }
 
+
+
+class timelineBody {
+  @Required() public readonly repId: string;
+}
 export class CrmPayrollResultCollection {
   @Property(CrmPayrollResultModel)
   public readonly payrollData: CrmPayrollResultModel[];
@@ -579,6 +602,10 @@ public async askOpenAI(@BodyParams() body: any, @Response() res: Response) {
 
 
 
+
+
+
+
 @Post("/crmRatesInActive")
 @Returns(200, SuccessResult).Of(CrmRateResultModel)
 public async crmRatesInActive(@Response() res: Response) {
@@ -624,54 +651,65 @@ public async crmRatesInActive(@Response() res: Response) {
 
 
 
-@Post("/crmRatesActive")
-@Returns(200, SuccessResult).Of(CrmRateResultModel)
-public async crmRatesActive(@Response() res: Response) {
 
 
 
+  //CRM DEALS 
+  @Post("/crmDealsGlobal")
+  @Returns(200, SuccessResult).Of(CrmDealResultModel)
+  public async crmDealsGlobal(@BodyParams() body: CrmDealsBody, @Response() res: Response) {
+    const { recordId } = body;
+    CrmPayBody;
+    if (!recordId) throw new BadRequest(MISSING_PARAMS);
 
-  const API_URL = "https://voltaicqbapi.herokuapp.com/CRMRatesActive";
+    const API_URL = "https://voltaicqbapi.herokuapp.com/CRMDealsReport";
 
- 
-  const headers = {
-    "Content-Type": "application/json"
-  };
-
-  console.log("Getting CRM users...");
-
-  const response = await axios.post(API_URL, {}, { headers });
-  if (!response || !response.data) throw new BadRequest("Invalid response from Quickbase API");
-
-  const data = response.data;
-
-  const dataArray = Array.isArray(data) ? data : [data];
-
-  console.log(dataArray);
-
-  // Map over dataArray and transform its structure
-  const results = dataArray.map((project) => {
-    return {
-      partner: project["fulfillmentPartner"] ||  null,
-      years: project["years"] || null,
-      status: project["status"] ||null,
-      financing: project["financing"] || null,
-      apr: project["apr"] ||null,
-      feerate: project["feeRate"] || null,
-   
+    const requestBody = {
+      repID: recordId
     };
-  });
 
-  return new SuccessResult({ rates: results }, CrmRatesResultCollection);
-}
+    const headers = {
+      "Content-Type": "application/json"
+    };
 
+    console.log("Getting CRM users...");
 
+    const response = await axios.post(API_URL, requestBody, { headers });
+    if (!response || !response.data) throw new BadRequest("Invalid response from Quickbase API");
 
+    const data = response.data;
 
+    const dataArray = Array.isArray(data) ? data : [data];
 
+    console.log(dataArray);
 
+    // Map over dataArray and transform its structure
+    const results = dataArray.map((project) => {
+      return {
+        email: project["email"] ? project["email"] : null,
+        projectID: project["projectID"] || "",
+        repName: project["repName"] || "sss",
+        homeownerName: project["homeownerName"] || null,
+        salesRep: project["salesRep"] || "crm",
+        leadGen: project["leadGenerator"] || "crm",
+        saleDate: project["saleDate"] || null,
+        ppwFinal: project["ppwFinal"] || null,
+        systemSizeFinal: project["systemSizeFinal"] || null,
+        stage: project["stage"] || "",
+        status: project["status"] || "",
+        milestone: project["milestone"] || null,
+        plansReceived: project["plansReceived"] || null,
+        installComplete: project["installComplete"] || null,
+        ptoApproved: project["ptoApproved"] || null,
+        datePaid: project["datePaid"] || null,
+        amount: project["amount"] || null,
+        installer: project["installer"] || null,
+        financing: project["financing"] || null
+      };
+    });
 
-
+    return new SuccessResult({ deals: results }, CrmDealResultCollection);
+  }
 
 
 
@@ -773,4 +811,238 @@ public async crmRatesActive(@Response() res: Response) {
     await this.adminService.deleteSessionCookie(sessionCookie);
     return new SuccessResult({ success: true, message: "logout successfully" }, SuccessMessageModel);
   }
+
+
+
+
+
+
+
+
+  @Post("/crmRatesActive")
+  @Returns(200, SuccessResult).Of(CrmRateResultModel)
+  public async crmRatesActive(@Response() res: Response) {
+  
+
+  
+    const API_URL = "https://voltaicqbapi.herokuapp.com/CRMRatesActive";
+  
+   
+    const headers = {
+      "Content-Type": "application/json"
+    };
+  
+    console.log("Getting CRM users...");
+  
+    const response = await axios.post(API_URL, {}, { headers });
+    if (!response || !response.data) throw new BadRequest("Invalid response from Quickbase API");
+  
+    const data = response.data;
+  
+    const dataArray = Array.isArray(data) ? data : [data];
+  
+    console.log(dataArray);
+  
+    // Map over dataArray and transform its structure
+    const results = dataArray.map((project) => {
+      return {
+        partner: project["fulfillmentPartner"] ||  null,
+        years: project["years"] || null,
+        status: project["status"] ||null,
+        financing: project["financing"] || null,
+        apr: project["apr"] ||null,
+        feerate: project["feeRate"] || null,
+     
+      };
+    });
+  
+    return new SuccessResult({ rates: results }, CrmRatesResultCollection);
+  }
+  
+
+
+
+
+
+//===================
+
+
+
+@Post("/crmAvgTimelines")
+@Returns(200, SuccessResult).Of(CrmTimelineResultModel)
+public async crmAvgTimelines(@BodyParams() body: timelineBody, @Response() res: Response) {
+
+  const API_URL = "https://voltaicqbapi.herokuapp.com/CRMTimelines";
+
+  const requestBody = {
+    repID: body.repId,
+  };
+
+  const headers = {
+    "Content-Type": "application/json",
+  };
+
+  console.log("Getting CRM users...");
+
+  const response = await axios.post(API_URL, requestBody, { headers });
+
+  console.log(response);
+  const data = response.data;
+
+  const item = data; // Assuming data is the object you are working with
+
+
+  // Check if data is not an array or empty
+  // Log the original item for debugging
+console.log("Original Item:", item);
+
+// Check if item is not an object or is empty
+if (typeof item !== 'object' || Object.keys(item).length === 0) {
+  throw new Error("Expected data to be a non-empty object");
 }
+
+const results = {
+  saleStage: item.saleStage,
+  welcometage: item.welcometage ,
+  sstage: item.sstage ,
+  ntpstage: item.ntpstage ,
+  qcStage: item.qcStage ,
+  planStage: item.planStage ,
+  flatage: item.flatage ,
+  permitStage: item.permitStage ,
+  installStage: item.installStage,
+  inspectStage: item.inspectStage,
+  ptoStage: item.ptoStage,
+};
+
+  return new SuccessResult({ timeline: results }, Avgtimeline);
+}
+
+
+
+@Post("/crmAHJTimelines")
+@Returns(200, SuccessResult).Of(CrmTimelineResultModel)
+public async crmAHJTimelines(@BodyParams() body: timelineBody, @Response() res: Response) {
+
+  const API_URL = "https://voltaicqbapi.herokuapp.com/CRMTimelinesByAHJ";
+
+    const requestBody = {
+      repID: body.repId,
+    };
+
+
+    const headers = {
+      "Content-Type": "application/json",
+    };
+
+    console.log("Getting CRM users...");
+
+    const response = await axios.post(API_URL, requestBody, { headers });
+
+    console.log(response)
+    const data = response.data;
+   
+  
+    if (!Array.isArray(data)) {
+      throw new Error("Expected data to be an array");
+    }
+    // Instead of checking if the data is an array, just convert it to the Timeline format
+    const results = data.map(item => ({
+      saleStage: item.averageSaleToWelcome ? item.averageSaleToWelcome.toString() : null,
+      welcometage: item.averageWelcomeToSS ? item.averageWelcomeToSS.toString() : null,
+      sstage: item.averageSsToNTP ? item.averageSsToNTP.toString() : null,
+      ntpstage: item.averageNTPToQC ? item.averageNTPToQC.toString() : null,
+      qcStage: item.averageQcToPlans ? item.averageQcToPlans.toString() : null,
+      planStage: item.averagePlansToFLA ? item.averagePlansToFLA.toString() : null,
+      flatage: item.averageFLAToPermit ? item.averageFLAToPermit.toString() : null,
+      permitStage: item.averagePermitToInstallation ? item.averagePermitToInstallation.toString() : null,
+      installStage: item.averageInstallationToInspection ? item.averageInstallationToInspection.toString() : null,
+      inspectStage: item.averageFIToPTO ? item.averageFIToPTO.toString() : null,
+      ptoStage: item.ptoStage ? item.ptoStage.toString() : null,
+      AHJ: item.ahj ? item.ahj.toString() : null,
+    }));
+
+
+
+
+
+
+
+
+  return new SuccessResult({ timeline: results }, AhjTimeline);
+}
+
+
+
+
+
+
+// @Post("/crmTimelines")
+// @Returns(200, SuccessResult).Of(CrmRateResultModel)
+// public async crmTimelines( @BodyParams() body: timelineBody,@Response() res: Response) {
+
+
+   
+//   const API_URL = "https://voltaicqbapi.herokuapp.com/CRMTimelines";
+
+//   const requestBody = {
+//     repID: body.repId,
+//   };
+//   // const requestBody = {
+//   //   repId: args.repId,
+//   // };
+
+//   const headers = {
+//     "Content-Type": "application/json",
+//   };
+
+//   console.log("Getting CRM users...");
+
+//   const response = await axios.post(API_URL, requestBody, { headers });
+
+//   console.log(response)
+//   const data = response.data;
+//   console.log("Data");
+//   console.log(data);
+
+//   console.log(typeof data);
+
+
+//   // Instead of checking if the data is an array, just convert it to the Timeline format
+//   const timeline = {
+//     saleStage: data.saleStage ? data.saleStage.toString() : null,
+//     welcometage: data.welcometage ? data.welcometage.toString() : null,
+//     sstage: data.sstage ? data.sstage.toString() : null,
+//     ntpstage: data.ntpstage ? data.ntpstage.toString() : null,
+//     qcStage: data.qcStage ? data.qcStage.toString() : null,
+//     planStage: data.planStage ? data.planStage.toString() : null,
+//     flatage: data.flatage ? data.flatage.toString() : null,
+//     permitStage: data.permitStage ? data.permitStage.toString() : null,
+//     installStage: data.installStage ? data.installStage.toString() : null,
+//     inspectStage: data.inspectStage ? data.inspectStage.toString() : null,
+//     ptoStage: data.ptoStage ? data.ptoStage.toString() : null,
+//   };
+
+
+//   // Map over dataArray and transform its structure
+//   // const results = dataArray.map((project) => {
+//   //   return {
+//   //     partner: project["fulfillmentPartner"] || null,
+//   //     years: project["years"] || null,
+//   //     status: project["status"] ||null,
+//   //     financing: project["financing"] || null,
+//   //     apr: project["apr"] ||null,
+//   //     feerate: project["feeRate"] || null,
+   
+//   //   };
+//   // });
+
+//   return new SuccessResult({ rates: results }, CrmRatesResultCollection);
+// }
+
+}
+
+
+
+
+
