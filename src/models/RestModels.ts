@@ -92,6 +92,7 @@ export class SingleCrmDealResultModel {
   @Property() public readonly milestone: string;
   @Property() public readonly datePaid: string;
   @Property() public readonly amount: string;
+  @Property() public readonly address: string;
   @Property() public readonly vcmessages: {
     relatedProject: string;
     type: string;
@@ -127,6 +128,7 @@ export class SingleCrmDealResultModel {
     milestone: string;
     datePaid: string;
     amount: string;
+    address: string;
     vcmessages: {
       relatedProject: string;
       type: string;
@@ -160,6 +162,7 @@ export class SingleCrmDealResultModel {
     this.milestone = data.milestone;
     this.datePaid = data.datePaid;
     this.amount = data.amount;
+    this.address = data.address;
     this.vcmessages = data.vcmessages;
     this.vcadders = data.vcadders;
   }

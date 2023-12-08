@@ -547,6 +547,7 @@ public async crmDeal(@BodyParams() body: CrmDealsBody, @Response() res: Response
   if (!response || !response.data) throw new BadRequest("Invalid response from Quickbase API");
 
   const data = response.data;
+  console.log(data)
 
   // Transform the structure as needed
   const result = {
@@ -567,9 +568,15 @@ public async crmDeal(@BodyParams() body: CrmDealsBody, @Response() res: Response
     ptoApproved: data["ptoApproved"] || null,
     datePaid: data["datePaid"] || null,
     amount: data["amount"] || null,
+    address: data["address"] || "",
     vcmessages: data["vcmessages"] || [],// Assuming vcmessages field exists and is an array
     vcadders: data["vcAdders"] || [],  // Assuming vcmadders field exists and is an array
   };
+
+//prod
+  console.log("Result : ")
+
+  console.log(result)
 
   const singleCrmDealResultModel = new SingleCrmDealResultModel(result); // Pass the result object as a single parameter
 
