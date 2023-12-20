@@ -33,13 +33,13 @@ export class AdminService {
    * @returns the user's role, company and orgId
    */
   public async checkPermissions(opts: { hasRole?: string[]; restrictCompany?: string }, admin: JWTPayload) {
-    const { role, company, email } = admin;
+    const { role, company, email, id } = admin;
     if (company) {
       if (opts.hasRole && (!role || !opts.hasRole.includes(role))) throw new Forbidden("Forbidden");
       if (opts.restrictCompany && company !== opts.restrictCompany) throw new Forbidden("Forbidden");
       if (role === "manager" && !company) throw new Forbidden("Forbidden, company not specified");
       const org = await this.organizationService.findOne({ name: company });
-      return { role, company, orgId: org?.id, email };
+      return { role, company, orgId: org?.id, email, adminId: id };
     }
     return {};
   }
@@ -52,9 +52,9 @@ export class AdminService {
     return await this.admin.findByIdAndUpdate({ _id: adminId }, { twoFactorEnabled });
   }
 
-  public async updateAdmin(data: { id: string; name?: string; email?: string }) {
-    const { id, name, email } = data;
-    return await this.admin.findByIdAndUpdate({ _id: id }, { name, email });
+  public async updateAdmin(data: { id: string; name?: string; role?: string; isSuperAdmin: boolean; }) {
+    const { id, name, role, isSuperAdmin } = data;
+    return await this.admin.findByIdAndUpdate({ _id: id }, { name, role, isSuperAdmin });
   }
 
   public async createAdmin(params: {
@@ -72,7 +72,8 @@ export class AdminService {
       role,
       recordID,
       orgId: organizationId,
-      password: createPasswordHash({ email, password })
+      password: createPasswordHash({ email, password }),
+      isSuperAdmin: email === process.env.SUPER_USER_EMAIL ? true : false
     });
   }
 
@@ -118,7 +119,8 @@ export class AdminService {
   }
 
   public async deleteSessionCookie(adminId: string) {
-    return await this.verifySession.deleteMany({ adminId, logout: true, logoutAt: new Date() });
+    await this.verifySession.updateOne({ adminId }, { logout: true });
+    return true;
   }
 
   public async updateAdminPassword({ email, password }: { email: string; password: string }) {

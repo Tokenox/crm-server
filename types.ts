@@ -29,12 +29,22 @@ export enum VerificationEnum {
   PASSWORD = "password"
 }
 
+export enum RoleEnum {
+  MANAGER = "manager",
+  SALESREP = "salesrep",
+  ADMIN = "CRM System Administrator"
+}
+
 export type CategoryBodyTypes = {
   name: string;
   description?: string;
   adminId?: string;
   orgId?: string;
   fields: CategoryFieldType[];
+};
+
+export type RoleBodyTypes = {
+  name: string;
 };
 
 export type LeadTypes = {
@@ -44,4 +54,27 @@ export type LeadTypes = {
   phone: string;
   categoryId: string;
   orgId?: string;
+};
+
+export type FieldTypes = {
+  name: string;
+  type: "string" | "number" | "boolean" | "date";
+};
+
+export enum SocialAction {
+  email = "email",
+  instagram = "instagram",
+  facebook = "facebook",
+  youtube = "youtube"
+}
+
+export type PlannerDataTypes = {
+  title: string;
+  action: SocialAction;
+  description?: string;
+  timeOfExecution: string;
+  startDate: string;
+  endDate: string;
+  orgId?: string;
+  adminId?: string;
 };

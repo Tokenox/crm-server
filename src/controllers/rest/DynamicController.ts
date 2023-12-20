@@ -1,6 +1,6 @@
 import { Controller, Inject } from "@tsed/di";
 import { BodyParams, Context, PathParams } from "@tsed/platform-params";
-import { Delete, Get, Post, Put, Returns } from "@tsed/schema";
+import { Delete, Get, Post, Property, Put, Required, Returns } from "@tsed/schema";
 import { Schema, model } from "mongoose";
 import { AdminService } from "../../services/AdminService";
 import { LeadService } from "../../services/LeadService";
@@ -8,8 +8,16 @@ import { createSchema, normalizeData } from "../../helper";
 import { CategoryService } from "../../services/CategoryService";
 import { ADMIN, MANAGER } from "../../util/constants";
 import { BadRequest } from "@tsed/exceptions";
-import { CATEGORY_ALREADY_EXISTS, CATEGORY_NOT_FOUND } from "../../util/errors";
+import { ADMIN_NOT_FOUND, CATEGORY_ALREADY_EXISTS, CATEGORY_NOT_FOUND, ORG_NOT_FOUND } from "../../util/errors";
 import { SuccessResult } from "../../util/entities";
+
+// fields types
+
+class InsertModelBodyParams {
+  @Required() public tableName: string;
+  @Required() public fields: any;
+  @Required() public data: any;
+}
 
 @Controller("/dynamic")
 export class DynamicController {
@@ -17,6 +25,8 @@ export class DynamicController {
   private adminService: AdminService;
   @Inject()
   private categoryServices: CategoryService;
+  @Inject()
+  private categoryService: CategoryService;
 
   @Post("/")
   async createDynamicModel(@BodyParams() modelData: any) {
@@ -37,11 +47,6 @@ export class DynamicController {
     if (!category) throw new BadRequest(CATEGORY_NOT_FOUND);
     const dynamicModel = createSchema({ tableName: category.name, columns: category.fields });
 
-    // let category = await this.categoryServices.findCategoryByNameAndOrgId({ name: tableName, orgId });
-    // if (!category) {
-    //   category = await this.categoryServices.createCategory({ name: tableName, orgId });
-    // }
-
     const newRecord = new dynamicModel({
       ...data,
       category: category?._id,
@@ -53,20 +58,41 @@ export class DynamicController {
     return new SuccessResult(response, Object);
   }
 
-  // create endpoint to insert many records in dynamic schema and model
+  @Put("/update")
+  @Returns(200, SuccessResult).Of(Object)
+  async updateDynamicModel(@BodyParams() modelData: any, @Context() context: Context) {
+    await this.adminService.checkPermissions({ hasRole: [ADMIN, MANAGER] }, context.get("user"));
+    const { tableId, data } = modelData;
+    const category = await this.categoryServices.findCategoryById(tableId);
+    if (!category) throw new BadRequest(CATEGORY_NOT_FOUND);
+    const dynamicModel = createSchema({ tableName: category.name, columns: category.fields });
+    const result = await dynamicModel.updateOne({ _id: data.id }, { $set: { ...data, updatedAt: new Date() } });
+    return new SuccessResult(result, Object);
+  }
+
   @Post("/createBulk")
   @Returns(200, SuccessResult).Of(Object)
-  async insertManyDynamicModel(@BodyParams() modelData: any, @Context() context: Context) {
-    const { orgId } = await this.adminService.checkPermissions({ hasRole: [ADMIN, MANAGER] }, context.get("user"));
-    const { tableName, columns, data } = modelData;
-    const dynamicModel = createSchema({ tableName, columns });
-
+  async insertManyDynamicModel(@BodyParams() body: any, @Context() context: Context) {
+    const { tableName, fields, data } = body;
+    console.log("tableName", tableName, fields, data);
+    const { orgId, email } = await this.adminService.checkPermissions(
+      { hasRole: [ADMIN, MANAGER, "CRM System Administrator"] },
+      context.get("user")
+    );
+    if (!orgId) throw new BadRequest(ORG_NOT_FOUND);
+    const admin = await this.adminService.findAdminByEmail(email!);
+    if (!admin) throw new BadRequest(ADMIN_NOT_FOUND);
     let category = await this.categoryServices.findCategoryByNameAndOrgId({ name: tableName, orgId });
-    // if (!category) {
-    //   category = await this.categoryServices.createCategory({ name: tableName, orgId });
-    // }
-    // format data to insert in dynamic schema
-    const formattedData = data.map((item: any) => {
+    if (category) throw new BadRequest(CATEGORY_ALREADY_EXISTS);
+    category = await this.categoryService.createCategory({
+      name: tableName,
+      description: "Dynamic Table Name",
+      fields,
+      orgId,
+      adminId: admin._id
+    });
+    const dynamicModel = createSchema({ tableName: category.name, columns: category.fields });
+    const formattedData = data?.map((item: any) => {
       return {
         ...item,
         orgId,
@@ -97,14 +123,6 @@ export class DynamicController {
     return new SuccessResult(normalizeData(result), Object);
   }
 
-  @Put("/update")
-  async updateDynamicModel(@BodyParams() modelData: any) {
-    const { tableName, columns, data, id } = modelData;
-    const dynamicModel = createSchema({ tableName, columns });
-    const result = await dynamicModel.updateOne({ _id: id }, { $set: { ...data, updatedAt: new Date() } });
-    return { message: `Model ${result} updated successfully.` };
-  }
-
   @Get("/id")
   async getDynamicModelById(@BodyParams() modelData: any) {
     const { tableName, columns, id } = modelData;
@@ -113,11 +131,13 @@ export class DynamicController {
     return result;
   }
 
-  @Delete("/delete")
-  async deleteDynamicModelById(@BodyParams() modelData: any) {
-    const { tableName, columns, id } = modelData;
-    const dynamicModel = createSchema({ tableName, columns });
+  @Post("/delete/:id")
+  async deleteDynamicModelById(@BodyParams() { tableId }: { tableId: string }, @PathParams("id") id: string, @Context() context: Context) {
+    await this.adminService.checkPermissions({ hasRole: [ADMIN, MANAGER] }, context.get("user"));
+    const category = await this.categoryServices.findCategoryById(tableId);
+    if (!category) throw new BadRequest(CATEGORY_NOT_FOUND);
+    const dynamicModel = createSchema({ tableName: category.name, columns: category.fields });
     const result = await dynamicModel.findByIdAndDelete(id);
-    return result;
+    return new SuccessResult(result, Object);
   }
 }

@@ -3,7 +3,7 @@ import { BadRequest } from "@tsed/exceptions";
 import { BodyParams, Context, PathParams, QueryParams } from "@tsed/platform-params";
 import { Delete, Get, Post, Property, Put, Required, Returns } from "@tsed/schema";
 import { AdminService } from "../../services/AdminService";
-import { ORG_NOT_FOUND } from "../../util/errors";
+import { EMAIL_EXISTS, ORG_NOT_FOUND } from "../../util/errors";
 import { ADMIN, MANAGER } from "../../util/constants";
 import { SuccessArrayResult, SuccessResult } from "../../util/entities";
 import { LeadService } from "../../services/LeadService";
@@ -60,6 +60,9 @@ export class LeadController {
   public async createLead(@BodyParams() body: LeadBodyParam, @Context() context: Context) {
     const { orgId } = await this.adminService.checkPermissions({ hasRole: [ADMIN, MANAGER] }, context.get("user"));
     if (!orgId) throw new BadRequest(ORG_NOT_FOUND);
+    const { email } = body;
+    const emailCheck = await this.leadService.findLeadsByName(email);
+    if (emailCheck) throw new BadRequest(EMAIL_EXISTS);
     const lead = await this.leadService.createLead({ ...body, orgId });
     return new SuccessResult(
       {
@@ -82,6 +85,9 @@ export class LeadController {
   public async createBulkLeads(@BodyParams() body: LeadBodyParam[], @Context() context: Context) {
     const { orgId } = await this.adminService.checkPermissions({ hasRole: [ADMIN, MANAGER] }, context.get("user"));
     if (!orgId) throw new BadRequest(ORG_NOT_FOUND);
+    const [{ email }] = body;
+    const emailCheck = await this.leadService.findLeadsByName(email);
+    if (emailCheck) throw new BadRequest(EMAIL_EXISTS);
     const leads = await this.leadService.createBulkLeads({ body, orgId });
     return new SuccessResult({ success: true, message: `leads created successfully` }, SuccessMessageModel);
   }

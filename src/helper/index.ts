@@ -27,7 +27,7 @@ export const createSchema = ({ tableName, columns }: { tableName: string; column
 // normalize data
 export const normalizeData = (data: any) => {
   const result = data.map((item: any) => {
-    const { _id, __v, createdAt, updatedAt, orgId, categoryId, category, ...rest } = item._doc;
+    const { __v, createdAt, updatedAt, orgId, categoryId, category, ...rest } = item._doc;
     return rest;
   });
   return result;

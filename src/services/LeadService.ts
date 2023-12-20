@@ -1,6 +1,6 @@
 import { Inject, Injectable } from "@tsed/di";
 import { LeadModel } from "../models/LeadModel";
-import { LeadTypes } from "types";
+import { FieldTypes, LeadTypes } from "types";
 import { MongooseModel } from "@tsed/mongoose";
 import { CategoryModel } from "../models/CategoryModel";
 
@@ -17,6 +17,9 @@ export class LeadService {
 
   public async findLeadById(id: string) {
     return this.lead.findById({ _id: id });
+  }
+  public async findLeadsByName(email : string) {
+    return this.lead.findOne({ email });
   }
 
   public async createLead({ firstName, lastName, email, phone, categoryId, orgId }: LeadTypes) {

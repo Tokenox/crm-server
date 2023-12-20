@@ -27,6 +27,10 @@ export const ADMIN_ALREADY_EXISTS = "ADMIN_ALREADY_EXISTS";
 export const CATEGORY_ALREADY_EXISTS = "CATEGORY_ALREADY_EXISTS";
 export const CATEGORY_NOT_FOUND = "CATEGORY_NOT_FOUND";
 export const INVALID_RESPONSE_QUICKBASE = "INVALID_RESPONSE_QUICKBASE";
+export const ROLE_EXISTS = "ROLE_ALREADY_EXISTS";
+export const FIELD_EXISTS = "FIELD_ALREADY_EXISTS";
+export const EMPTY_CATEGORY = "EMPTY_CATEGORY";
+export const EMPTY_LEAD = "EMPTY_LEAD";
 
 export const errorMap: { [key: string]: string } = {
   SOMETHING_WENT_WRONG: "Looks like something is wrong, we are working to fix it.",
@@ -58,5 +62,8 @@ export const errorMap: { [key: string]: string } = {
   ADMIN_ALREADY_EXISTS: "Admin already exists with this email.",
   CATEGORY_ALREADY_EXISTS: "Category already exists with this name.",
   CATEGORY_NOT_FOUND: "Category not found.",
+  FIELD_ALREADY_EXISTS: "Field already exists",
+  EMPTY_CATEGORY: "Category can not be null",
+  EMPTY_LEAD: "Lead name can not be null",
   INVALID_RESPONSE_QUICKBASE: "Invalid response from quickbase."
 };

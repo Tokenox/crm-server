@@ -67,35 +67,22 @@ class CrmDealsBody {
   @Required() public readonly recordId: string;
 }
 
-class CrmRateBody {
-
-}
+class CrmRateBody {}
 
 export class SingleCrmDealResultCollection {
   @Property() public deals: SingleCrmDealResultModel[];
 }
 
-
-
 export class CrmRatesResultCollection {
   @Property() public rates: CrmRateResultModel[];
 }
 
-
-
-
-export class Avgtimeline{
+export class Avgtimeline {
   @Property() public timeline: CrmTimelineAvgResultModel;
-
-  
 }
 
-
-
-export class AhjTimeline{
+export class AhjTimeline {
   @Property() public timeline: CrmTimelineResultModel[];
-
-  
 }
 
 class AIResponseCollection {
@@ -108,8 +95,6 @@ export class CrmDealResultCollection {
 class CrmPayBody {
   @Required() public readonly recordId: string;
 }
-
-
 
 class timelineBody {
   @Required() public readonly repId: string;
@@ -197,7 +182,6 @@ export class AuthenticationController {
     await this.adminService.completeAdminRegistration({ id: admin.id, name, email, password });
     return new SuccessResult({ success: true, message: "Admin registration successfully completed" }, SuccessMessageModel);
   }
-
   @Post("/login")
   @Returns(200, SuccessResult).Of(AdminResultModel)
   public async adminLogin(@BodyParams() body: AdminLoginBody, @Response() res: Response) {
@@ -212,6 +196,7 @@ export class AuthenticationController {
     // res.cookie("session", sessionCookie, options);
     return new SuccessResult(
       {
+        id: admin._id,
         name: admin.name,
         email: admin.email,
         role: admin.role || "",
@@ -219,7 +204,8 @@ export class AuthenticationController {
         twoFactorEnabled: admin.twoFactorEnabled,
         orgId: admin.orgId || "",
         company: "crm",
-        token: sessionCookie
+        token: sessionCookie,
+        isSuperAdmin: admin.isSuperAdmin
       },
       AdminResultModel
     );
@@ -228,6 +214,7 @@ export class AuthenticationController {
   @Post("/crmPayroll")
   @Returns(200, SuccessResult).Of(CrmPayrollResultModel)
   public async crmPayroll(@BodyParams() body: CrmPayBody, @Response() res: Response) {
+    console.log("crm payroll-----------------------------------------")
     const { recordId } = body;
     CrmPayBody;
     if (!recordId) throw new BadRequest(MISSING_PARAMS);
@@ -246,6 +233,7 @@ export class AuthenticationController {
     console.log(recordId);
 
     const response = await axios.post(API_URL, requestBody, { headers });
+    console.log("response--------", response);
     if (!response || !response.data) throw new BadRequest("Invalid response from Quickbase API");
     const data = response.data;
     const dataArray = Array.isArray(data) ? data : [data];
@@ -358,22 +346,18 @@ export class AuthenticationController {
     return new SuccessResult({ payrollData: payrollResults }, CrmPayrollResultCollection);
   }
 
-
   @Post("/crmDealsRookieLedgen")
   @Returns(200, SuccessResult).Of(CrmDealResultModel)
   public async crmDealsRookieLedgens(@Response() res: Response) {
-
-    
     const API_URL = "https://voltaicqbapi.herokuapp.com/CRMDealsRookieLeadgen";
 
- 
     const headers = {
       "Content-Type": "application/json"
     };
 
     console.log("Getting CRM users...");
 
-    const response = await axios.post(API_URL, {},{ headers });
+    const response = await axios.post(API_URL, {}, { headers });
     if (!response || !response.data) throw new BadRequest("Invalid response from Quickbase API");
 
     const data = response.data;
@@ -410,22 +394,18 @@ export class AuthenticationController {
     return new SuccessResult({ deals: results }, CrmDealResultCollection);
   }
 
-
   @Post("/crmDealsRookie")
   @Returns(200, SuccessResult).Of(CrmDealResultModel)
   public async crmDealsRookie(@Response() res: Response) {
-
-    
     const API_URL = "https://voltaicqbapi.herokuapp.com/CRMDealsRookie";
 
- 
     const headers = {
       "Content-Type": "application/json"
     };
 
     console.log("Getting CRM users...");
 
-    const response = await axios.post(API_URL, {},{ headers });
+    const response = await axios.post(API_URL, {}, { headers });
     if (!response || !response.data) throw new BadRequest("Invalid response from Quickbase API");
 
     const data = response.data;
@@ -518,150 +498,127 @@ export class AuthenticationController {
     return new SuccessResult({ deals: results }, CrmDealResultCollection);
   }
 
-// SINGLE CRM DEAL
+  // SINGLE CRM DEAL
 
+  @Post("/crmDeal")
+  @Returns(200, SuccessResult).Of(SingleCrmDealResultModel)
+  public async crmDeal(@BodyParams() body: CrmDealsBody, @Response() res: Response) {
+    const { recordId } = body;
+    CrmPayBody;
+    if (!recordId) throw new BadRequest(MISSING_PARAMS);
 
-@Post("/crmDeal")
-@Returns(200, SuccessResult).Of(SingleCrmDealResultModel)
-public async crmDeal(@BodyParams() body: CrmDealsBody, @Response() res: Response) {
-  const { recordId } = body;
-  CrmPayBody;
-  if (!recordId) throw new BadRequest(MISSING_PARAMS);
+    const API_URL = "https://voltaicqbapi.herokuapp.com/CRMDeal";
 
-  const API_URL = "https://voltaicqbapi.herokuapp.com/CRMDeal";
-
-  
-
-  ///Deal ID changed here! 
-  const requestBody = {
-    dealID: recordId
-  };
-
-  const headers = {
-    "Content-Type": "application/json"
-  };
-
-  console.log("Getting CRM deal...");
-
-  const response = await axios.post(API_URL, requestBody, { headers });
-  if (!response || !response.data) throw new BadRequest("Invalid response from Quickbase API");
-
-  const data = response.data;
-  console.log(data)
-
-  // Transform the structure as needed
-  const result = {
-    email: data["email"] ? data["email"] : null,
-    projectID: data["projectID"] || "",
-    repName: data["repName"] || "sss",
-    homeownerName: data["homeownerName"] || null,
-    salesRep: data["salesRep"] || "crm",
-    leadGen: data["leadGenerator"] || "crm",
-    saleDate: data["saleDate"] || null,
-    ppwFinal: data["ppwFinal"] || null,
-    systemSizeFinal: data["systemSizeFinal"] || null,
-    stage: data["stage"] || "",
-    status: data["status"] || "",
-    milestone: data["milestone"] || null,
-    plansReceived: data["plansReceived"] || null,
-    installComplete: data["installComplete"] || null,
-    ptoApproved: data["ptoApproved"] || null,
-    datePaid: data["datePaid"] || null,
-    amount: data["amount"] || null,
-    address: data["address"] || "",
-    vcmessages: data["vcmessages"] || [],// Assuming vcmessages field exists and is an array
-    vcadders: data["vcAdders"] || [],  // Assuming vcmadders field exists and is an array
-  };
-
-//prod
-  console.log("Result : ")
-
-  console.log(result)
-
-  const singleCrmDealResultModel = new SingleCrmDealResultModel(result); // Pass the result object as a single parameter
-
-  return new SuccessResult(singleCrmDealResultModel, SingleCrmDealResultModel);
-}
-
-@Post("/askOpenAI")
-@Returns(200, SuccessResult).Of(AIResponseModel)
-public async askOpenAI(@BodyParams() body: any, @Response() res: Response) {
-  try {
-    // Extract the question from the request body
-    const userQuestion = body.question;
-
-    // Assuming openAIService.askQuestion is correctly implemented
-    const aiResponseText = await openAIService.askQuestion(userQuestion);
-
-    // Create an instance of AIResponseModel
-    const responseModel = new AIResponseModel();
-    responseModel.response = aiResponseText;
-
-    // Return the response wrapped in a SuccessResult
-    // Pass the instance and the class (constructor) for serialization
-    return new SuccessResult(responseModel, AIResponseModel);
-  } catch (error) {
-    console.error(error);
-    throw new BadRequest("Error processing your question");
-  }
-}
-
-
-
-
-
-
-
-
-@Post("/crmRatesInActive")
-@Returns(200, SuccessResult).Of(CrmRateResultModel)
-public async crmRatesInActive(@Response() res: Response) {
-
-
-
-
-  const API_URL = "https://voltaicqbapi.herokuapp.com/CRMRatesInActive";
-
- 
-  const headers = {
-    "Content-Type": "application/json"
-  };
-
-  console.log("Getting CRM users...");
-
-  const response = await axios.post(API_URL, {}, { headers });
-  if (!response || !response.data) throw new BadRequest("Invalid response from Quickbase API");
-
-  const data = response.data;
-
-  const dataArray = Array.isArray(data) ? data : [data];
-
-  console.log(dataArray);
-
-  // Map over dataArray and transform its structure
-  const results = dataArray.map((project) => {
-    return {
-      partner: project["fulfillmentPartner"] || null,
-      years: project["years"] || null,
-      status: project["status"] ||null,
-      financing: project["financing"] || null,
-      apr: project["apr"] ||null,
-      feerate: project["feeRate"] || null,
-   
+    ///Deal ID changed here!
+    const requestBody = {
+      dealID: recordId
     };
-  });
 
-  return new SuccessResult({ rates: results }, CrmRatesResultCollection);
-}
+    const headers = {
+      "Content-Type": "application/json"
+    };
 
+    console.log("Getting CRM deal...");
 
+    const response = await axios.post(API_URL, requestBody, { headers });
+    if (!response || !response.data) throw new BadRequest("Invalid response from Quickbase API");
 
+    const data = response.data;
+    console.log(data);
 
+    // Transform the structure as needed
+    const result = {
+      email: data["email"] ? data["email"] : null,
+      projectID: data["projectID"] || "",
+      repName: data["repName"] || "sss",
+      homeownerName: data["homeownerName"] || null,
+      salesRep: data["salesRep"] || "crm",
+      leadGen: data["leadGenerator"] || "crm",
+      saleDate: data["saleDate"] || null,
+      ppwFinal: data["ppwFinal"] || null,
+      systemSizeFinal: data["systemSizeFinal"] || null,
+      stage: data["stage"] || "",
+      status: data["status"] || "",
+      milestone: data["milestone"] || null,
+      plansReceived: data["plansReceived"] || null,
+      installComplete: data["installComplete"] || null,
+      ptoApproved: data["ptoApproved"] || null,
+      datePaid: data["datePaid"] || null,
+      amount: data["amount"] || null,
+      address: data["address"] || "",
+      vcmessages: data["vcmessages"] || [], // Assuming vcmessages field exists and is an array
+      vcadders: data["vcAdders"] || [] // Assuming vcmadders field exists and is an array
+    };
 
+    //prod
+    console.log("Result : ");
 
+    console.log(result);
 
+    const singleCrmDealResultModel = new SingleCrmDealResultModel(result); // Pass the result object as a single parameter
 
-  //CRM DEALS 
+    return new SuccessResult(singleCrmDealResultModel, SingleCrmDealResultModel);
+  }
+
+  @Post("/askOpenAI")
+  @Returns(200, SuccessResult).Of(AIResponseModel)
+  public async askOpenAI(@BodyParams() body: any, @Response() res: Response) {
+    try {
+      // Extract the question from the request body
+      const userQuestion = body.question;
+
+      // Assuming openAIService.askQuestion is correctly implemented
+      const aiResponseText = await openAIService.askQuestion(userQuestion);
+
+      // Create an instance of AIResponseModel
+      const responseModel = new AIResponseModel();
+      responseModel.response = aiResponseText;
+
+      // Return the response wrapped in a SuccessResult
+      // Pass the instance and the class (constructor) for serialization
+      return new SuccessResult(responseModel, AIResponseModel);
+    } catch (error) {
+      console.error(error);
+      throw new BadRequest("Error processing your question");
+    }
+  }
+
+  @Post("/crmRatesInActive")
+  @Returns(200, SuccessResult).Of(CrmRateResultModel)
+  public async crmRatesInActive(@Response() res: Response) {
+    const API_URL = "https://voltaicqbapi.herokuapp.com/CRMRatesInActive";
+
+    const headers = {
+      "Content-Type": "application/json"
+    };
+
+    console.log("Getting CRM users...");
+
+    const response = await axios.post(API_URL, {}, { headers });
+    if (!response || !response.data) throw new BadRequest("Invalid response from Quickbase API");
+
+    const data = response.data;
+
+    const dataArray = Array.isArray(data) ? data : [data];
+
+    console.log(dataArray);
+
+    // Map over dataArray and transform its structure
+    const results = dataArray.map((project) => {
+      return {
+        partner: project["fulfillmentPartner"] || null,
+        years: project["years"] || null,
+        status: project["status"] || null,
+        financing: project["financing"] || null,
+        apr: project["apr"] || null,
+        feerate: project["feeRate"] || null
+      };
+    });
+
+    return new SuccessResult({ rates: results }, CrmRatesResultCollection);
+  }
+
+  //CRM DEALS
   @Post("/crmDealsGlobal")
   @Returns(200, SuccessResult).Of(CrmDealResultModel)
   public async crmDealsGlobal(@BodyParams() body: CrmDealsBody, @Response() res: Response) {
@@ -718,9 +675,7 @@ public async crmRatesInActive(@Response() res: Response) {
     return new SuccessResult({ deals: results }, CrmDealResultCollection);
   }
 
-
-
-  //CRM DEALS 
+  //CRM DEALS
   @Post("/crmDeals")
   @Returns(200, SuccessResult).Of(CrmDealResultModel)
   public async crmDeals(@BodyParams() body: CrmDealsBody, @Response() res: Response) {
@@ -775,15 +730,6 @@ public async crmRatesInActive(@Response() res: Response) {
     return new SuccessResult({ deals: results }, CrmDealResultCollection);
   }
 
-
-
-
-
-
-
-
-
-  
   @Put("/reset-password")
   @Returns(200, SuccessResult).Of(SuccessMessageModel)
   public async resetPassword(@BodyParams() body: UpdateAdminPasswordParams) {
@@ -819,142 +765,116 @@ public async crmRatesInActive(@Response() res: Response) {
     return new SuccessResult({ success: true, message: "logout successfully" }, SuccessMessageModel);
   }
 
-
-
-
-
-
-
-
   @Post("/crmRatesActive")
   @Returns(200, SuccessResult).Of(CrmRateResultModel)
   public async crmRatesActive(@Response() res: Response) {
-  
-
-  
     const API_URL = "https://voltaicqbapi.herokuapp.com/CRMRatesActive";
-  
-   
+
     const headers = {
       "Content-Type": "application/json"
     };
-  
+
     console.log("Getting CRM users...");
-  
+
     const response = await axios.post(API_URL, {}, { headers });
     if (!response || !response.data) throw new BadRequest("Invalid response from Quickbase API");
-  
+
     const data = response.data;
-  
+
     const dataArray = Array.isArray(data) ? data : [data];
-  
+
     console.log(dataArray);
-  
+
     // Map over dataArray and transform its structure
     const results = dataArray.map((project) => {
       return {
-        partner: project["fulfillmentPartner"] ||  null,
+        partner: project["fulfillmentPartner"] || null,
         years: project["years"] || null,
-        status: project["status"] ||null,
+        status: project["status"] || null,
         financing: project["financing"] || null,
-        apr: project["apr"] ||null,
-        feerate: project["feeRate"] || null,
-     
+        apr: project["apr"] || null,
+        feerate: project["feeRate"] || null
       };
     });
-  
+
     return new SuccessResult({ rates: results }, CrmRatesResultCollection);
   }
-  
 
+  //===================
 
-
-
-
-//===================
-
-
-
-@Post("/crmAvgTimelines")
-@Returns(200, SuccessResult).Of(CrmTimelineResultModel)
-public async crmAvgTimelines(@BodyParams() body: timelineBody, @Response() res: Response) {
-
-  const API_URL = "https://voltaicqbapi.herokuapp.com/CRMTimelines";
-
-  const requestBody = {
-    repID: body.repId,
-  };
-
-  const headers = {
-    "Content-Type": "application/json",
-  };
-
-  console.log("Getting CRM users...");
-
-  const response = await axios.post(API_URL, requestBody, { headers });
-
-  console.log(response);
-  const data = response.data;
-
-  const item = data; // Assuming data is the object you are working with
-
-
-  // Check if data is not an array or empty
-  // Log the original item for debugging
-console.log("Original Item:", item);
-
-// Check if item is not an object or is empty
-if (typeof item !== 'object' || Object.keys(item).length === 0) {
-  throw new Error("Expected data to be a non-empty object");
-}
-
-const results = {
-  saleStage: item.saleStage,
-  welcometage: item.welcometage ,
-  sstage: item.sstage ,
-  ntpstage: item.ntpstage ,
-  qcStage: item.qcStage ,
-  planStage: item.planStage ,
-  flatage: item.flatage ,
-  permitStage: item.permitStage ,
-  installStage: item.installStage,
-  inspectStage: item.inspectStage,
-  ptoStage: item.ptoStage,
-};
-
-  return new SuccessResult({ timeline: results }, Avgtimeline);
-}
-
-
-
-@Post("/crmAHJTimelines")
-@Returns(200, SuccessResult).Of(CrmTimelineResultModel)
-public async crmAHJTimelines(@BodyParams() body: timelineBody, @Response() res: Response) {
-
-  const API_URL = "https://voltaicqbapi.herokuapp.com/CRMTimelinesByAHJ";
+  @Post("/crmAvgTimelines")
+  @Returns(200, SuccessResult).Of(CrmTimelineResultModel)
+  public async crmAvgTimelines(@BodyParams() body: timelineBody, @Response() res: Response) {
+    const API_URL = "https://voltaicqbapi.herokuapp.com/CRMTimelines";
 
     const requestBody = {
-      repID: body.repId,
+      repID: body.repId
     };
 
-
     const headers = {
-      "Content-Type": "application/json",
+      "Content-Type": "application/json"
     };
 
     console.log("Getting CRM users...");
 
     const response = await axios.post(API_URL, requestBody, { headers });
 
-    console.log(response)
+    console.log(response);
     const data = response.data;
-   
-  
+
+    const item = data; // Assuming data is the object you are working with
+
+    // Check if data is not an array or empty
+    // Log the original item for debugging
+    console.log("Original Item:", item);
+
+    // Check if item is not an object or is empty
+    if (typeof item !== "object" || Object.keys(item).length === 0) {
+      throw new Error("Expected data to be a non-empty object");
+    }
+
+    const results = {
+      saleStage: item.saleStage,
+      welcometage: item.welcometage,
+      sstage: item.sstage,
+      ntpstage: item.ntpstage,
+      qcStage: item.qcStage,
+      planStage: item.planStage,
+      flatage: item.flatage,
+      permitStage: item.permitStage,
+      installStage: item.installStage,
+      inspectStage: item.inspectStage,
+      ptoStage: item.ptoStage
+    };
+
+    return new SuccessResult({ timeline: results }, Avgtimeline);
+  }
+
+  @Post("/crmAHJTimelines")
+  @Returns(200, SuccessResult).Of(CrmTimelineResultModel)
+  public async crmAHJTimelines(@BodyParams() body: timelineBody, @Response() res: Response) {
+    const API_URL = "https://voltaicqbapi.herokuapp.com/CRMTimelinesByAHJ";
+
+    const requestBody = {
+      repID: body.repId
+    };
+
+    const headers = {
+      "Content-Type": "application/json"
+    };
+
+    console.log("Getting CRM users...");
+
+    const response = await axios.post(API_URL, requestBody, { headers });
+
+    console.log(response);
+    const data = response.data;
+
     if (!Array.isArray(data)) {
       throw new Error("Expected data to be an array");
     }
     // Instead of checking if the data is an array, just convert it to the Timeline format
-    const results = data.map(item => ({
+    const results = data.map((item) => ({
       saleStage: item.averageSaleToWelcome ? item.averageSaleToWelcome.toString() : null,
       welcometage: item.averageWelcomeToSS ? item.averageWelcomeToSS.toString() : null,
       sstage: item.averageSsToNTP ? item.averageSsToNTP.toString() : null,
@@ -966,90 +886,68 @@ public async crmAHJTimelines(@BodyParams() body: timelineBody, @Response() res: 
       installStage: item.averageInstallationToInspection ? item.averageInstallationToInspection.toString() : null,
       inspectStage: item.averageFIToPTO ? item.averageFIToPTO.toString() : null,
       ptoStage: item.ptoStage ? item.ptoStage.toString() : null,
-      AHJ: item.ahj ? item.ahj.toString() : null,
+      AHJ: item.ahj ? item.ahj.toString() : null
     }));
 
+    return new SuccessResult({ timeline: results }, AhjTimeline);
+  }
 
+  // @Post("/crmTimelines")
+  // @Returns(200, SuccessResult).Of(CrmRateResultModel)
+  // public async crmTimelines( @BodyParams() body: timelineBody,@Response() res: Response) {
 
+  //   const API_URL = "https://voltaicqbapi.herokuapp.com/CRMTimelines";
 
+  //   const requestBody = {
+  //     repID: body.repId,
+  //   };
+  //   // const requestBody = {
+  //   //   repId: args.repId,
+  //   // };
 
+  //   const headers = {
+  //     "Content-Type": "application/json",
+  //   };
 
+  //   console.log("Getting CRM users...");
 
+  //   const response = await axios.post(API_URL, requestBody, { headers });
 
-  return new SuccessResult({ timeline: results }, AhjTimeline);
+  //   console.log(response)
+  //   const data = response.data;
+  //   console.log("Data");
+  //   console.log(data);
+
+  //   console.log(typeof data);
+
+  //   // Instead of checking if the data is an array, just convert it to the Timeline format
+  //   const timeline = {
+  //     saleStage: data.saleStage ? data.saleStage.toString() : null,
+  //     welcometage: data.welcometage ? data.welcometage.toString() : null,
+  //     sstage: data.sstage ? data.sstage.toString() : null,
+  //     ntpstage: data.ntpstage ? data.ntpstage.toString() : null,
+  //     qcStage: data.qcStage ? data.qcStage.toString() : null,
+  //     planStage: data.planStage ? data.planStage.toString() : null,
+  //     flatage: data.flatage ? data.flatage.toString() : null,
+  //     permitStage: data.permitStage ? data.permitStage.toString() : null,
+  //     installStage: data.installStage ? data.installStage.toString() : null,
+  //     inspectStage: data.inspectStage ? data.inspectStage.toString() : null,
+  //     ptoStage: data.ptoStage ? data.ptoStage.toString() : null,
+  //   };
+
+  //   // Map over dataArray and transform its structure
+  //   // const results = dataArray.map((project) => {
+  //   //   return {
+  //   //     partner: project["fulfillmentPartner"] || null,
+  //   //     years: project["years"] || null,
+  //   //     status: project["status"] ||null,
+  //   //     financing: project["financing"] || null,
+  //   //     apr: project["apr"] ||null,
+  //   //     feerate: project["feeRate"] || null,
+
+  //   //   };
+  //   // });
+
+  //   return new SuccessResult({ rates: results }, CrmRatesResultCollection);
+  // }
 }
-
-
-
-
-
-
-// @Post("/crmTimelines")
-// @Returns(200, SuccessResult).Of(CrmRateResultModel)
-// public async crmTimelines( @BodyParams() body: timelineBody,@Response() res: Response) {
-
-
-   
-//   const API_URL = "https://voltaicqbapi.herokuapp.com/CRMTimelines";
-
-//   const requestBody = {
-//     repID: body.repId,
-//   };
-//   // const requestBody = {
-//   //   repId: args.repId,
-//   // };
-
-//   const headers = {
-//     "Content-Type": "application/json",
-//   };
-
-//   console.log("Getting CRM users...");
-
-//   const response = await axios.post(API_URL, requestBody, { headers });
-
-//   console.log(response)
-//   const data = response.data;
-//   console.log("Data");
-//   console.log(data);
-
-//   console.log(typeof data);
-
-
-//   // Instead of checking if the data is an array, just convert it to the Timeline format
-//   const timeline = {
-//     saleStage: data.saleStage ? data.saleStage.toString() : null,
-//     welcometage: data.welcometage ? data.welcometage.toString() : null,
-//     sstage: data.sstage ? data.sstage.toString() : null,
-//     ntpstage: data.ntpstage ? data.ntpstage.toString() : null,
-//     qcStage: data.qcStage ? data.qcStage.toString() : null,
-//     planStage: data.planStage ? data.planStage.toString() : null,
-//     flatage: data.flatage ? data.flatage.toString() : null,
-//     permitStage: data.permitStage ? data.permitStage.toString() : null,
-//     installStage: data.installStage ? data.installStage.toString() : null,
-//     inspectStage: data.inspectStage ? data.inspectStage.toString() : null,
-//     ptoStage: data.ptoStage ? data.ptoStage.toString() : null,
-//   };
-
-
-//   // Map over dataArray and transform its structure
-//   // const results = dataArray.map((project) => {
-//   //   return {
-//   //     partner: project["fulfillmentPartner"] || null,
-//   //     years: project["years"] || null,
-//   //     status: project["status"] ||null,
-//   //     financing: project["financing"] || null,
-//   //     apr: project["apr"] ||null,
-//   //     feerate: project["feeRate"] || null,
-   
-//   //   };
-//   // });
-
-//   return new SuccessResult({ rates: results }, CrmRatesResultCollection);
-// }
-
-}
-
-
-
-
-

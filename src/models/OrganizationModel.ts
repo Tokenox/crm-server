@@ -3,6 +3,7 @@ import { Model, ObjectID, Ref, Unique } from "@tsed/mongoose";
 import { AdminModel } from "./AdminModel";
 import { CategoryModel } from "./CategoryModel";
 import { LeadModel } from "./LeadModel";
+import { PlannerModel } from "./PlannerModel";
 
 @Model({ name: "org" })
 export class OrganizationModel {
@@ -36,4 +37,8 @@ export class OrganizationModel {
   @Ref(() => LeadModel)
   @CollectionOf(() => LeadModel)
   leads: Ref<LeadModel>[];
+
+  @Ref(() => PlannerModel)
+  @CollectionOf(() => PlannerModel)
+  planners: Ref<PlannerModel>[];
 }

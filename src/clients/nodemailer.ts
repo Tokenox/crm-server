@@ -55,4 +55,41 @@ export class NodemailerClient {
       }
     });
   }
+
+  public static async sendEmailToPlanner({
+    email,
+    title,
+    description,
+    action
+  }: {
+    email: string;
+    title: string;
+    description: string;
+    action: string;
+  }) {
+    const transporter = nodemailer.createTransport({
+      host: "smtp.porkbun.com",
+      port: 587,
+      secure: false,
+      auth: {
+        user: process.env.EMAIL,
+        pass: process.env.PASSWORD
+      }
+    });
+    const mailOptions = {
+      from: process.env.EMAIL,
+      to: email,
+      subject: `${title}`,
+      html: `<p>${description}</p>
+      <p>${action}</p>
+      <p>Thanks</p>`
+    };
+    transporter.sendMail(mailOptions, async function (error, info) {
+      if (error) return console.log("Error:(", error);
+      if (info?.response) {
+        console.log("Email sent:)" + info.response);
+        return "Email sent successfully";
+      }
+    });
+  }
 }
