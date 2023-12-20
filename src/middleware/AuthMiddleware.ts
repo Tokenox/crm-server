@@ -16,6 +16,7 @@ export class AuthMiddleware {
 
   public async use(@Req() req: Req, @Context() ctx: Context) {
     console.log("cookie---------", req.headers);
+    console.log("body---------", req);
     const isPublicRoute = ctx.request.url.startsWith("/docs") || ctx.request.url.startsWith("/rest");
     const adminToken = req.headers.cookie?.split("session=")[1];
     console.log("adminToken-------", adminToken);
