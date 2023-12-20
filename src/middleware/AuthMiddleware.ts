@@ -15,7 +15,7 @@ export class AuthMiddleware {
   public organizationService: OrganizationService;
 
   public async use(@Req() req: Req, @Context() ctx: Context) {
-    const isPublicRoute = ctx.request.url.startsWith("/docs") || ctx.request.url.startsWith("/rest/auth");
+    const isPublicRoute = ctx.request.url.startsWith("/docs") || ctx.request.url.startsWith("/rest");
     const adminToken = req.headers.cookie?.split("session=")[1];
     if (adminToken && !isPublicRoute) {
       const admin = await this.adminService.getActiveAdmin(adminToken);
