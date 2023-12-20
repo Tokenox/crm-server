@@ -15,8 +15,10 @@ export class AuthMiddleware {
   public organizationService: OrganizationService;
 
   public async use(@Req() req: Req, @Context() ctx: Context) {
+    console.log("user---------", req.headers.cookie?.split("session="));
     const isPublicRoute = ctx.request.url.startsWith("/docs") || ctx.request.url.startsWith("/rest");
     const adminToken = req.headers.cookie?.split("session=")[1];
+    console.log("adminToken-------", adminToken);
     if (adminToken && !isPublicRoute) {
       const admin = await this.adminService.getActiveAdmin(adminToken);
       if (!admin.orgId) throw new Forbidden(ORG_NOT_FOUND);
