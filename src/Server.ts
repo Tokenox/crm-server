@@ -81,6 +81,6 @@ export class Server {
 const corsSettings = {
   origin: ["https://vccrm.vercel.app", "https://crm-admin-chi.vercel.app", "http://localhost:3000"],
   methods: ["GET", "POST", "PUT", "Delete", "PATCH", "OPTIONS"],
-  exposedHeaders: ["x-auth-token"],
-  credentials: true
+  // exposedHeaders: ["x-auth-token"],
+  // credentials: true
 };
