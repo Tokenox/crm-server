@@ -14,6 +14,7 @@ import { AuthMiddleware } from "./middleware/AuthMiddleware";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import compression from "compression";
+import ka from "date-fns/locale/ka/index";
 
 @Configuration({
   ...config,
