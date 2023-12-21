@@ -65,7 +65,7 @@ export class Server {
     this.app.use(
       cors({
         exposedHeaders: ["Authorization", "Content-Type"],
-        origin: ["https://vccrm.vercel.app", "http://localhost:3000"],
+        origin: ["https://vccrm.vercel.app", "https://crm-admin-chi.vercel.app", "http://localhost:3000"],
         methods: ["GET", "POST", "PUT", "Delete", "PATCH", "OPTIONS"],
         credentials: true,
         allowedHeaders: ["Content-Type", "Authorization"]
@@ -86,7 +86,7 @@ export class Server {
 }
 
 const corsSettings = {
-  origin: ["https://vccrm.vercel.app", "https://crm-admin-chi.vercel.app", "http://localhost:3000"],
+  origin: ["https://vccrm.vercel.app", "http://localhost:3000"],
   methods: ["GET", "POST", "PUT", "Delete", "PATCH", "OPTIONS"],
   exposedHeaders: ["x-auth-token"],
   credentials: true
