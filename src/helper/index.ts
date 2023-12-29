@@ -32,3 +32,16 @@ export const normalizeData = (data: any) => {
   });
   return result;
 };
+
+// get columns for raw data
+export const getColumns = (data: any) => {
+  const columns: any = [];
+  const keys = Object?.keys(data);
+  keys.forEach((key) => {
+    columns.push({
+      name: key,
+      type: "string"
+    });
+  });
+  return columns;
+};

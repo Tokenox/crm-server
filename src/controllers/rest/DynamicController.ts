@@ -4,7 +4,7 @@ import { Delete, Get, Post, Property, Put, Required, Returns } from "@tsed/schem
 import { Schema, model } from "mongoose";
 import { AdminService } from "../../services/AdminService";
 import { LeadService } from "../../services/LeadService";
-import { createSchema, normalizeData } from "../../helper";
+import { createSchema, getColumns, normalizeData } from "../../helper";
 import { CategoryService } from "../../services/CategoryService";
 import { ADMIN, MANAGER } from "../../util/constants";
 import { BadRequest } from "@tsed/exceptions";
@@ -17,6 +17,11 @@ class InsertModelBodyParams {
   @Required() public tableName: string;
   @Required() public fields: any;
   @Required() public data: any;
+}
+
+class CreateLeadWebhookBodyParams {
+  @Property() public lead: any;
+  @Property() public source: string;
 }
 
 @Controller("/dynamic")
@@ -139,5 +144,29 @@ export class DynamicController {
     const dynamicModel = createSchema({ tableName: category.name, columns: category.fields });
     const result = await dynamicModel.findByIdAndDelete(id);
     return new SuccessResult(result, Object);
+  }
+
+  @Post("/webhook/lead")
+  async createWebhookLead(@BodyParams() { source, lead }: CreateLeadWebhookBodyParams) {
+    let category = await this.categoryServices.findCategoryByName(source.toLocaleLowerCase());
+    const fields = getColumns(lead);
+    if (!category) {
+      // create category
+      category = await this.categoryServices.createCategory({
+        name: source.toLocaleLowerCase(),
+        fields,
+        description: "Create category from webhook"
+      });
+    }
+    const dynamicModel = createSchema({ tableName: source.toLocaleLowerCase(), columns: fields });
+
+    const newRecord = new dynamicModel({
+      ...lead,
+      category: category?._id,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    });
+    const response = await newRecord.save();
+    return new SuccessResult(response, Object);
   }
 }
