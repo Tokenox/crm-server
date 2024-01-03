@@ -54,6 +54,7 @@ export class DynamicController {
 
     const newRecord = new dynamicModel({
       ...data,
+      isNotify: false,
       category: category?._id,
       orgId,
       createdAt: new Date(),
@@ -71,7 +72,7 @@ export class DynamicController {
     const category = await this.categoryServices.findCategoryById(tableId);
     if (!category) throw new BadRequest(CATEGORY_NOT_FOUND);
     const dynamicModel = createSchema({ tableName: category.name, columns: category.fields });
-    const result = await dynamicModel.updateOne({ _id: data.id }, { $set: { ...data, updatedAt: new Date() } });
+    const result = await dynamicModel.updateOne({ _id: data.id }, { $set: { ...data, isNotify: false, updatedAt: new Date() } });
     return new SuccessResult(result, Object);
   }
 
@@ -101,6 +102,7 @@ export class DynamicController {
       return {
         ...item,
         orgId,
+        isNotify: false,
         categoryId: category?._id.toString(),
         createdAt: new Date(),
         updatedAt: new Date()
@@ -159,7 +161,6 @@ export class DynamicController {
       });
     }
     const dynamicModel = createSchema({ tableName: source.toLocaleLowerCase(), columns: fields });
-
     const newRecord = new dynamicModel({
       ...lead,
       category: category?._id,

@@ -3,6 +3,7 @@ import { Model, ObjectID, Ref } from "@tsed/mongoose";
 import { AdminModel } from "./AdminModel";
 import { LeadModel } from "./LeadModel";
 import { OrganizationModel } from "./OrganizationModel";
+import { PlannerModel } from "./PlannerModel";
 
 export type CategoryFieldType = {
   name: string;
@@ -42,6 +43,10 @@ export class CategoryModel {
 
   @Ref(() => OrganizationModel)
   org: Ref<OrganizationModel>;
+
+  @Ref(() => PlannerModel)
+  @CollectionOf(() => PlannerModel)
+  planners: Ref<PlannerModel>[];
 
   // @Ref(() => LeadModel)
   // @CollectionOf(() => LeadModel)

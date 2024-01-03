@@ -3,6 +3,7 @@ import { Default, Property, Required } from "@tsed/schema";
 import { SocialAction } from "../../types";
 import { AdminModel } from "./AdminModel";
 import { OrganizationModel } from "./OrganizationModel";
+import { CategoryModel } from "./CategoryModel";
 
 @Model({ name: "planner" })
 export class PlannerModel {
@@ -18,14 +19,14 @@ export class PlannerModel {
   @Property()
   description: string;
 
+  @Property()
+  categoryId: string;
+
   @Required()
-  timeOfExecution: Date;
+  timeOfExecution: string;
 
   @Required()
   startDate: Date;
-
-  @Required()
-  endDate: Date;
 
   @Property()
   orgId: string;
@@ -46,4 +47,7 @@ export class PlannerModel {
 
   @Ref(() => AdminModel)
   admin: Ref<AdminModel>;
+
+  @Ref(() => CategoryModel)
+  category: Ref<CategoryModel>;
 }

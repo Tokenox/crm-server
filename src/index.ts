@@ -7,17 +7,21 @@ import { Secrets } from "./util/secrets";
 
 import cron from "node-cron";
 import { NodemailerClient } from "./clients/nodemailer";
-import { runJob } from "./cron/reminder";
+import { notifyLeads, runJob } from "./cron/reminder";
 
 // Schedule the cron job to run every 5 minutes
+// cron.schedule("*/15 * * * *", async () => {
+//   console.log("Running cron job");
+//   const planners = await runJob();
+//   for (let i = 0; i < planners.length; i++) {
+//     const planner = planners[i];
+//     const { title, description, action } = planner;
+//     // await NodemailerClient.sendEmailToPlanner({ title, email: "raza8r@gmail.com", description, action });
+//   }
+// });
 cron.schedule("*/15 * * * *", async () => {
   console.log("Running cron job");
-  const planners = await runJob();
-  for (let i = 0; i < planners.length; i++) {
-    const planner = planners[i];
-    const { title, description, action } = planner;
-    // await NodemailerClient.sendEmailToPlanner({ title, email: "raza8r@gmail.com", description, action });
-  }
+//  await notifyLeads();
 });
 
 export class Application {

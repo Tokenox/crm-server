@@ -5,13 +5,18 @@ export const createSchema = ({ tableName, columns }: { tableName: string; column
   try {
     dynamicModel = model(tableName);
   } catch (error) {
-    // Define a dynamic schema based on the provided columns
+    const isNotify = {
+      name: "isNotify",
+      type: "boolean"
+    };
+    const updatedColumn = [...columns, isNotify];
     const schemaDefinition: Record<string, any> = {};
-    for (const column of columns) {
+    for (const column of updatedColumn) {
       schemaDefinition[column.name] = column.type;
     }
     const schema = new Schema(schemaDefinition);
     schema.add({
+      isNotify: Boolean,
       categoryId: String,
       adminId: String,
       orgId: String,

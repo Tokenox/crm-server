@@ -304,6 +304,7 @@ export class PlannerResultModel {
   @Property() public readonly endDate: string;
   @Property() public readonly timeOfExecution: string;
   @Property() public readonly adminId: string;
+  @Property() public readonly categoryId: string;
 }
 
 export class RoleResultModel {
