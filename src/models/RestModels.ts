@@ -307,9 +307,14 @@ export class PlannerResultModel {
   @Property() public readonly categoryId: string;
 }
 
+export class AvailabilityResultModel {
+  @Property() public readonly _id: string;
+  @Property() public readonly startDate: string;
+  @Property() public readonly endDate: string;
+  @Property() public readonly adminId: string;
+}
+
 export class RoleResultModel {
   @Property() public readonly _id: string;
   @Property() public readonly name: string;
-  @Property() public readonly createdAt: Date;
-  @Property() public readonly updatedAt: Date;
 }
