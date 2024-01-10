@@ -5,10 +5,7 @@ import { Server } from "./Server";
 import mongoose from "mongoose";
 import { Secrets } from "./util/secrets";
 
-import cron from "node-cron";
-import { NodemailerClient } from "./clients/nodemailer";
-import { notifyLeads, runJob } from "./cron/reminder";
-
+// import cron from "node-cron";
 // Schedule the cron job to run every 5 minutes
 // cron.schedule("*/15 * * * *", async () => {
 //   console.log("Running cron job");
@@ -19,10 +16,10 @@ import { notifyLeads, runJob } from "./cron/reminder";
 //     // await NodemailerClient.sendEmailToPlanner({ title, email: "raza8r@gmail.com", description, action });
 //   }
 // });
-cron.schedule("*/15 * * * *", async () => {
-  console.log("Running cron job");
-//  await notifyLeads();
-});
+// cron.schedule("*/15 * * * *", async () => {
+//   console.log("Running cron job");
+// //  await notifyLeads();
+// });
 
 export class Application {
   private app: express.Application;
