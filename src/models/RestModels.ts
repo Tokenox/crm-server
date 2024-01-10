@@ -63,9 +63,7 @@ export class CategoryResultModel {
   @Property() public readonly id: string;
   @Property() public readonly name: string;
   @Property() public readonly description: string;
-  @Property() public readonly adminId: string;
-  @Property() public readonly orgId: string;
-  @ArrayOf(Object) public readonly fields: CategoryFieldType[];
+  @Property() public readonly saleRepId: string;
   @Property() public readonly createdAt: Date;
   @Property() public readonly updatedAt: Date;
 }
@@ -76,8 +74,12 @@ export class LeadResultModel {
   @Property() public readonly lastName: string;
   @Property() public readonly email: string;
   @Property() public readonly phone: string;
+  @Property() public readonly message: string;
+  @Property() public readonly source: string;
+  @Property() public readonly isNotify: boolean;
+  @Property() public readonly status: string;
+  @Property() public readonly saleRepId: string;
   @Property() public readonly categoryId: string;
-  @Property() public readonly orgId: string;
   @Property() public readonly createdAt: Date;
   @Property() public readonly updatedAt: Date;
 }
@@ -176,8 +178,6 @@ export class SingleCrmDealResultModel {
   }
 }
 
-
-
 export class CrmRateResultModel {
   @Property() public readonly partner: string;
   @Property() public readonly years: string;
@@ -185,10 +185,9 @@ export class CrmRateResultModel {
   @Property() public readonly financing: string;
   @Property() public readonly apr: string;
   @Property() public readonly feerate: string;
-
 }
 
-export class CrmTimelineAvgResultModel{
+export class CrmTimelineAvgResultModel {
   @Property() public readonly saleStage: string;
   @Property() public readonly welcometage: string;
   @Property() public readonly sstage: string;
@@ -200,10 +199,9 @@ export class CrmTimelineAvgResultModel{
   @Property() public readonly installStage: string;
   @Property() public readonly inspectStage: string;
   @Property() public readonly ptoStage: string;
-
 }
 
-export class CrmTimelineResultModel{
+export class CrmTimelineResultModel {
   @Property() public readonly saleStage: string;
   @Property() public readonly welcometage: string;
   @Property() public readonly sstage: string;
@@ -217,7 +215,6 @@ export class CrmTimelineResultModel{
   @Property() public readonly ptoStage: string;
   @Property() public readonly AHJ: string;
 }
-
 
 export class AIResponseModel {
   @Property() public response: string; // removed the readonly modifier
@@ -241,7 +238,6 @@ export class CrmDealRookieResultModel {
   @Property() public readonly milestone: string;
   @Property() public readonly datePaid: string;
   @Property() public readonly amount: string;
-
 }
 export class CrmDealResultModel {
   @Property() public readonly email: string;
@@ -298,23 +294,50 @@ export class CrmPayrollResultModel {
 export class PlannerResultModel {
   @Property() public readonly _id: string;
   @Property() public readonly title: string;
-  @Property() @Enum(SocialAction) public readonly action: SocialAction;
+  @Property() public readonly source: string;
+  @Property() public readonly action: string;
   @Property() public readonly description: string;
-  @Property() public readonly startDate: string;
-  @Property() public readonly endDate: string;
-  @Property() public readonly timeOfExecution: string;
-  @Property() public readonly adminId: string;
-  @Property() public readonly categoryId: string;
+  @Property() public readonly startDate: Date;
+  @Property() public readonly timeOfExecution: number;
+  @Property() public readonly saleRepId: string;
 }
 
 export class AvailabilityResultModel {
   @Property() public readonly _id: string;
-  @Property() public readonly startDate: string;
-  @Property() public readonly endDate: string;
-  @Property() public readonly adminId: string;
+  @Property() public readonly startTime: Date;
+  @Property() public readonly endTime: Date;
+  @Property() public readonly saleRepId: string;
+  @Property() public readonly createdAt: Date;
+  @Property() public readonly updatedAt: Date;
 }
 
 export class RoleResultModel {
   @Property() public readonly _id: string;
   @Property() public readonly name: string;
+}
+
+export class SaleRefResultModel {
+  @Property() public readonly _id: string;
+  @Property() public readonly adminId: string;
+  @Property() public readonly score: number;
+  @Property() public readonly leads: string[];
+  @Property() public readonly createdAt: Date;
+  @Property() public readonly updatedAt: Date;
+}
+
+export class AllLeadsResultModel {
+  @Property() public readonly _id: string;
+  @Property() public readonly id: string;
+  @Property() public readonly name: string;
+  @Property() public readonly email: string;
+  @Property() public readonly phone: string;
+  @Property() public readonly isNotify: boolean;
+  @Property() public readonly status: string;
+  @Property() public readonly categoryId: string;
+  @Property() public readonly createdAt: Date;
+  @Property() public readonly updatedAt: Date;
+  @Property() public readonly adminId: string;
+  @Property() public readonly saleRep: string;
+  @Property() public readonly source: string;
+  @Property() public readonly leadId: string;
 }

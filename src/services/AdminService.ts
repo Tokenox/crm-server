@@ -8,6 +8,7 @@ import { AdminModel } from "../models/AdminModel";
 import { MongooseModel } from "@tsed/mongoose";
 import { OrganizationModel } from "../models/OrganizationModel";
 import { VerifySessionModal } from "../models/VerifySessionModal";
+import { SaleRepService } from "./SaleRepService";
 
 @Injectable()
 export class AdminService {
@@ -16,6 +17,8 @@ export class AdminService {
     @Inject(AdminModel) private admin: MongooseModel<AdminModel>,
     @Inject(VerifySessionModal) private verifySession: MongooseModel<VerifySessionModal>
   ) {}
+  @Inject()
+  private saleRep: SaleRepService;
 
   private createToken(id: string) {
     return encrypt(id);
@@ -32,16 +35,10 @@ export class AdminService {
    * @param context the user from the request context
    * @returns the user's role, company and orgId
    */
-  public async checkPermissions(opts: { hasRole?: string[]; restrictCompany?: string }, admin: JWTPayload) {
-    const { role, company, email, id } = admin;
-    if (company) {
-      if (opts.hasRole && (!role || !opts.hasRole.includes(role))) throw new Forbidden("Forbidden");
-      if (opts.restrictCompany && company !== opts.restrictCompany) throw new Forbidden("Forbidden");
-      if (role === "manager" && !company) throw new Forbidden("Forbidden, company not specified");
-      const org = await this.organizationService.findOne({ name: company });
-      return { role, company, orgId: org?.id, email, adminId: id };
-    }
-    return {};
+  public async checkPermissions(opts: { hasRole?: string[] }, admin: JWTPayload) {
+    const { role, email, id } = admin;
+    if (opts.hasRole && (!role || !opts.hasRole.includes(role))) throw new Forbidden("Forbidden");
+    return { role, email, adminId: id };
   }
 
   public async findAdminByEmail(email: string) {
@@ -52,7 +49,7 @@ export class AdminService {
     return await this.admin.findByIdAndUpdate({ _id: adminId }, { twoFactorEnabled });
   }
 
-  public async updateAdmin(data: { id: string; name?: string; role?: string; isSuperAdmin: boolean; }) {
+  public async updateAdmin(data: { id: string; name?: string; role?: string; isSuperAdmin: boolean }) {
     const { id, name, role, isSuperAdmin } = data;
     return await this.admin.findByIdAndUpdate({ _id: id }, { name, role, isSuperAdmin });
   }
@@ -66,7 +63,7 @@ export class AdminService {
     recordID: string;
   }) {
     const { email, name, password, organizationId, role, recordID } = params;
-    return await this.admin.create({
+    const response = await this.admin.create({
       email: email.trim().toLowerCase(),
       name,
       role,
@@ -75,6 +72,8 @@ export class AdminService {
       password: createPasswordHash({ email, password }),
       isSuperAdmin: email === process.env.SUPER_USER_EMAIL ? true : false
     });
+    await this.saleRep.createSaleRep({ adminId: response._id });
+    return response;
   }
 
   public async completeAdminRegistration({ id, name, email, password }: { id: string; name: string; email: string; password: string }) {

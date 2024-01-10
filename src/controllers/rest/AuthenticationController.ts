@@ -14,18 +14,21 @@ import {
   SingleCrmDealResultModel,
   CrmPayrollResultModel,
   CrmTimelineResultModel,
-  CrmTimelineAvgResultModel
+  CrmTimelineAvgResultModel,
+  SaleRefResultModel
 } from "../../models/RestModels";
 import { openAIService } from "../../helper/OpenAIService";
 import { SuccessResult } from "../../util/entities";
 import { VerificationService } from "../../services/VerificationService";
 import { AdminService } from "../../services/AdminService";
 import { NodemailerClient } from "../../clients/nodemailer";
-import { ADMIN_ALREADY_EXISTS, ORGANIZATION_NAME_ALREADY_EXISTS } from "../../util/errors";
+import { ADMIN_ALREADY_EXISTS } from "../../util/errors";
 import { OrganizationService } from "../../services/OrganizationService";
 import { createPasswordHash } from "../../util";
 import { VerificationEnum } from "../../../types";
 import axios from "axios";
+import { SaleRepService } from "../../services/SaleRepService";
+import { normalizeData, normalizeObject } from "../../helper";
 
 export class StartVerificationParams {
   @Required() public readonly email: string;
@@ -104,6 +107,11 @@ export class CrmPayrollResultCollection {
   public readonly payrollData: CrmPayrollResultModel[];
 }
 
+class CreateSaleRepBody {
+  @Required() public readonly adminId: string;
+  @Property() public readonly score: number;
+}
+
 const isSecure = process.env.NODE_ENV === "production";
 @Controller("/auth")
 export class AuthenticationController {
@@ -113,6 +121,8 @@ export class AuthenticationController {
   private adminService: AdminService;
   @Inject()
   private organizationService: OrganizationService;
+  @Inject()
+  private saleRepService: SaleRepService;
 
   @Post("/start-verification")
   @Returns(200, SuccessResult).Of(SuccessMessageModel)
@@ -182,6 +192,7 @@ export class AuthenticationController {
     await this.adminService.completeAdminRegistration({ id: admin.id, name, email, password });
     return new SuccessResult({ success: true, message: "Admin registration successfully completed" }, SuccessMessageModel);
   }
+
   @Post("/login")
   @Returns(200, SuccessResult).Of(AdminResultModel)
   public async adminLogin(@BodyParams() body: AdminLoginBody, @Response() res: Response) {
@@ -211,10 +222,26 @@ export class AuthenticationController {
     );
   }
 
+  @Post("/create-sale-rep")
+  @Returns(200, SuccessResult).Of(SaleRefResultModel)
+  public async createSaleRep(@BodyParams() { adminId, score }: CreateSaleRepBody) {
+    const saleRep = await this.saleRepService.createSaleRep({ adminId, score });
+    return new SuccessResult(normalizeObject(saleRep), SaleRefResultModel);
+  }
+
+  @Get("/sale-rep")
+  @Returns(200, SuccessResult).Of(SaleRefResultModel)
+  public async getSaleRep() {
+    const saleRep = await this.saleRepService.findAll();
+    return new SuccessResult(normalizeData(saleRep), SaleRefResultModel);
+  }
+
+  //!--------------------------
+
   @Post("/crmPayroll")
   @Returns(200, SuccessResult).Of(CrmPayrollResultModel)
   public async crmPayroll(@BodyParams() body: CrmPayBody, @Response() res: Response) {
-    console.log("crm payroll-----------------------------------------")
+    console.log("crm payroll-----------------------------------------");
     const { recordId } = body;
     CrmPayBody;
     if (!recordId) throw new BadRequest(MISSING_PARAMS);

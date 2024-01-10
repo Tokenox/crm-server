@@ -1,9 +1,10 @@
-import { CollectionOf, Default, Property } from "@tsed/schema";
+import { Default, Property, Enum, CollectionOf } from "@tsed/schema";
 import { Model, ObjectID, Ref } from "@tsed/mongoose";
 import { CategoryModel } from "./CategoryModel";
-import { OrganizationModel } from "./OrganizationModel";
+import { LeadStatusEnum, SocialAction } from "../../types";
+import { SaleRepModel } from "./SaleRepModel";
 
-@Model({ name: "lead" })
+@Model({ name: "leads" })
 export class LeadModel {
   @ObjectID("id")
   _id: string;
@@ -21,10 +22,27 @@ export class LeadModel {
   phone: string;
 
   @Property()
+  message: string;
+
+  @Property()
+  source: string;
+
+  @Property()
+  @Default(false)
+  isNotify: boolean;
+
+  @Enum(LeadStatusEnum)
+  status: LeadStatusEnum;
+
+  @Property()
   categoryId: string;
 
   @Property()
-  orgId: string;
+  saleRepId: string;
+
+  @CollectionOf(String)
+  @Default([])
+  plannerIds: string[];
 
   @Property()
   @Default(new Date())
@@ -34,10 +52,9 @@ export class LeadModel {
   @Default(new Date())
   updatedAt: Date;
 
-  // @Ref(() => CategoryModel)
-  // category: Ref<CategoryModel>;
+  @Ref(() => CategoryModel)
+  category: Ref<CategoryModel>;
 
-  @Ref(() => OrganizationModel)
-  org: Ref<OrganizationModel>;
-
+  @Ref(() => SaleRepModel)
+  saleRep: Ref<SaleRepModel>;
 }

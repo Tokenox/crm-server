@@ -1,13 +1,14 @@
 import { Controller, Inject } from "@tsed/di";
-import { BadRequest } from "@tsed/exceptions";
+import { Unauthorized } from "@tsed/exceptions";
 import { BodyParams, Context } from "@tsed/platform-params";
-import { Enum, Get, Property, Put, Required, Returns } from "@tsed/schema";
-import { ORG_NOT_FOUND } from "../../util/errors";
-import { AdminResultModel, AdminRoleModel, IdModel } from "../../models/RestModels";
+import { Enum, Get, Post, Property, Put, Required, Returns } from "@tsed/schema";
+import { ADMIN_NOT_FOUND } from "../../util/errors";
+import { AdminResultModel, AdminRoleModel, SaleRefResultModel, SuccessMessageModel } from "../../models/RestModels";
 import { AdminService } from "../../services/AdminService";
 import { SuccessArrayResult, SuccessResult } from "../../util/entities";
 import { ADMIN } from "../../util/constants";
 import { RoleEnum } from "../../../types";
+import { SaleRepService } from "../../services/SaleRepService";
 
 class UpdateAdminParams {
   @Required() public readonly id: string;
@@ -18,6 +19,7 @@ class UpdateAdminParams {
 @Controller("/admin")
 export class AdminController {
   @Inject() private adminService: AdminService;
+  @Inject() private saleRepService: SaleRepService;
 
   @Get()
   @Returns(200, SuccessArrayResult).Of(AdminResultModel)

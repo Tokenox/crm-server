@@ -26,3 +26,26 @@ export const categoryModel = createSchema({
     { name: "orgId", type: "string" }
   ]
 });
+
+export const leadsModel = createSchema({
+  tableName: "allleads",
+  columns: [
+    { name: "source", type: "string" },
+    { name: "status", type: "string" },
+    { name: "leadId", type: "string" },
+    { name: "categoryId", type: "string" },
+    { name: "adminId", type: "string" }
+  ]
+});
+
+export const saleRepModel = createSchema({
+  tableName: "saleReps",
+  columns: [
+    { name: "score", type: "string" },
+    { name: "availabilityId", type: "string" },
+    { name: "adminId", type: "string" },
+    { name: "leads", type: "array" }
+    
+   
+  ]
+});

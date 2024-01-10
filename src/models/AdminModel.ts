@@ -1,30 +1,29 @@
-import { CollectionOf, Default, Property } from "@tsed/schema";
+import { CollectionOf, Default, Property, Required } from "@tsed/schema";
 import { Model, ObjectID, Ref } from "@tsed/mongoose";
 import { OrganizationModel } from "./OrganizationModel";
 import { VerifySessionModal } from "./VerifySessionModal";
-import { CategoryModel } from "./CategoryModel";
-import { PlannerModel } from "./PlannerModel";
-import { AvailabilityModel } from "./AvailabilityModel";
+import { SaleRepModel } from "./SaleRepModel";
+import { ADMIN } from "../util/constants";
 
 @Model({ name: "admin" })
 export class AdminModel {
   @ObjectID("id")
   _id: string;
 
-  @Property()
+  @Required()
   name: string;
 
-  @Property()
+  @Required()
   email: string;
 
-  @Property()
+  @Required()
   password: string;
 
   @Property()
   recordID: string;
 
-  @Property()
-  @Default("admin")
+  @Required()
+  @Default(ADMIN)
   role: string;
 
   @Property()
@@ -37,6 +36,7 @@ export class AdminModel {
 
   @Property()
   orgId: string;
+
   @Property()
   @Default(new Date())
   createdAt: Date;
@@ -52,15 +52,6 @@ export class AdminModel {
   @CollectionOf(() => VerifySessionModal)
   verifySessions: Ref<VerifySessionModal>[];
 
-  @Ref(() => CategoryModel)
-  @CollectionOf(() => CategoryModel)
-  categories: Ref<CategoryModel>[];
-
-  @Ref(() => PlannerModel)
-  @CollectionOf(() => PlannerModel)
-  planners: Ref<PlannerModel>[];
-
-  @Ref(() => AvailabilityModel)
-  @CollectionOf(() => AvailabilityModel)
-  availability: Ref<AvailabilityModel>[];
+  @Ref(() => SaleRepModel)
+  saleRep: Ref<SaleRepModel>;
 }

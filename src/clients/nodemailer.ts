@@ -56,17 +56,7 @@ export class NodemailerClient {
     });
   }
 
-  public static async sendEmailToPlanner({
-    email,
-    title,
-    description,
-    action
-  }: {
-    email: string;
-    title: string;
-    description: string;
-    action: string;
-  }) {
+  public static async sendEmailToLead({ email, title, description }: { email: string; title: string; description: string }) {
     const transporter = nodemailer.createTransport({
       host: "smtp.porkbun.com",
       port: 587,
@@ -81,7 +71,6 @@ export class NodemailerClient {
       to: email,
       subject: `${title}`,
       html: `<p>${description}</p>
-      <p>${action}</p>
       <p>Thanks</p>`
     };
     transporter.sendMail(mailOptions, async function (error, info) {
