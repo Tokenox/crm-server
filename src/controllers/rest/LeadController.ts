@@ -90,6 +90,15 @@ export class LeadController {
     return new SuccessResult(normalizeObject(response), LeadResultModel);
   }
 
+  @Delete("/:id")
+  @Returns(200, SuccessResult).Of(SuccessMessageModel)
+  public async deleteLead(@PathParams() { id }: IdModel, @Context() context: Context) {
+    const { adminId } = await this.adminService.checkPermissions({ hasRole: [ADMIN] }, context.get("user"));
+    if (!adminId) throw new Unauthorized(ADMIN_NOT_FOUND);
+    await this.leadService.deleteLead(id);
+    return new SuccessResult({ success: true, message: "Lead deleted successfully" }, SuccessMessageModel);
+  }
+
   // @Get("/")
   // @Returns(200, SuccessArrayResult).Of(LeadResultModel)
   // public async getLeads(@Context() context: Context) {
