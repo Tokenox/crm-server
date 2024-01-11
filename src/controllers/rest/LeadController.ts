@@ -7,7 +7,7 @@ import { ADMIN_NOT_FOUND, SALE_REP_NOT_FOUND } from "../../util/errors";
 import { ADMIN, MANAGER, SALESREP } from "../../util/constants";
 import { Pagination, SuccessArrayResult, SuccessResult } from "../../util/entities";
 import { LeadService } from "../../services/LeadsService";
-import { IdModel, LeadResultModel, SuccessMessageModel } from "../../models/RestModels";
+import { IdModel, LeadResultModel, SaleRepDetailsResultModel, SuccessMessageModel } from "../../models/RestModels";
 import { normalizeData, normalizeObject } from "../../helper";
 import { SaleRepService } from "../../services/SaleRepService";
 import { LeadStatusEnum } from "../../../types";
@@ -78,6 +78,28 @@ export class LeadController {
       sort
     });
     return new SuccessResult(new Pagination(normalizeData(leads.leads), leads.count, LeadResultModel), Pagination);
+  }
+
+  @Get("/detail/:id")
+  @Returns(200, SuccessResult).Of(SaleRepDetailsResultModel)
+  public async getLeadById(@PathParams() { id }: IdModel, @Context() context: Context) {
+    const { adminId } = await this.adminService.checkPermissions({ hasRole: [ADMIN, SALESREP] }, context.get("user"));
+    if (!adminId) throw new Unauthorized(ADMIN_NOT_FOUND);
+    const lead = await this.leadService.findLead(id);
+    if (!lead) throw new BadRequest("Lead not found");
+    const saleRep = await this.saleRepService.findSaleRepById(lead.saleRepId);
+    if (!saleRep) throw new BadRequest(SALE_REP_NOT_FOUND);
+    const admin = await this.adminService.findAdminById(saleRep.adminId);
+    if (!admin) throw new BadRequest(ADMIN_NOT_FOUND);
+    const response = normalizeObject(lead);
+    const result = {
+      ...response,
+      saleRepId: saleRep._id,
+      saleRepScore: saleRep.score,
+      saleRepName: admin.name,
+      saleRepEmail: admin.email
+    };
+    return new SuccessResult(result, SaleRepDetailsResultModel);
   }
 
   @Post("/claim")

@@ -13,6 +13,12 @@ export class SaleRepService {
     return await this.saleRep.find();
   }
 
+  public async findSaleRepById(id: string) {
+    return await this.saleRep.findById({
+      _id: id
+    });
+  }
+
   public async findSaleRep() {
     const saleRep = await this.saleRep.find().sort({ score: -1 }).limit(5);
     if (!saleRep.length) return false;

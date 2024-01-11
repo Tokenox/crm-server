@@ -1,4 +1,4 @@
-import { CollectionOf, Default, Property } from "@tsed/schema";
+import { Default, Property } from "@tsed/schema";
 import { Model, ObjectID, Ref } from "@tsed/mongoose";
 import { SaleRepModel } from "./SaleRepModel";
 

@@ -11,6 +11,7 @@ import { normalizeObject } from "../../helper";
 import { TwilioClient } from "../../clients/twilio";
 import { PlannerService } from "../../services/PlannerService";
 import { NodemailerClient } from "../../clients/nodemailer";
+import { ChatService } from "../../services/ChatService";
 
 class CreateLeadParams {
   @Required() public source: string;
@@ -31,6 +32,8 @@ export class Webhook {
   private categoryService: CategoryService;
   @Inject()
   private plannerService: PlannerService;
+  @Inject()
+  private chatService: ChatService;
 
   @Post("/lead")
   @Returns(200, SuccessResult).Of(LeadResultModel)
@@ -113,8 +116,14 @@ export class Webhook {
       });
       if (!leads.length) continue;
       const phoneNumbers = leads.map((lead) => lead.phone);
+      const leadIds = leads.map((lead) => lead._id);
       await TwilioClient.sendSmsToLead({ to: phoneNumbers, body: `${planner.title} - ${planner.description}` });
-      await this.leadService.deletePlannerByIds({ plannerId: planner._id });
+      await this.leadService.deletePlannerByIds({ _leadIds: leadIds, plannerId: planner._id });
+      await this.chatService.createChat({
+        source: SocialAction.sms,
+        message: `${planner.title} - ${planner.description}`,
+        leadIds: leads.map((lead) => lead._id)
+      });
     }
     return new SuccessResult({ success: true, message: `${planners.length} planners` }, SuccessMessageModel);
   }

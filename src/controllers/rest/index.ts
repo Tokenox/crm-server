@@ -10,4 +10,5 @@ export * from "./AdminController";
 export * from "./PlannerController";
 export * from "./RoleController";
 export * from "./AvailabilityController";
+export * from "./ChatController";
 export * from "./Webhooks";

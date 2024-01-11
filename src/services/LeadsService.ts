@@ -193,10 +193,10 @@ export class LeadService {
     );
   }
 
-  public async deletePlannerByIds({ plannerId }: { plannerId: string }) {
-    return await this.lead.updateMany(
+  public async deletePlannerByIds({ _leadIds, plannerId }: { _leadIds: string[]; plannerId: string }) {
+    return this.lead.updateMany(
       {
-        plannerIds: { $in: [plannerId] }
+        _id: { $in: _leadIds }
       },
       {
         $pull: { plannerIds: plannerId }
@@ -204,3 +204,11 @@ export class LeadService {
     );
   }
 }
+// return await this.lead.updateMany(
+//   {
+//     plannerIds: { $in: [plannerId] }
+//   },
+//   {
+//     $pull: { plannerIds: plannerId }
+//   }
+// );
