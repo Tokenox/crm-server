@@ -96,6 +96,10 @@ export class LeadService {
     return this.lead.find({ plannerIds: { $in: [plannerId] } }).limit(5);
   }
 
+  public async findLeadBySource({ source }: { source: string }) {
+    return this.lead.find({ source });
+  }
+
   //! Create
   public async createLead({ ...params }: CreateLeadParams) {
     return this.lead.create({
@@ -198,6 +202,15 @@ export class LeadService {
       {
         _id: { $in: _leadIds }
       },
+      {
+        $pull: { plannerIds: plannerId }
+      }
+    );
+  }
+
+  public async deleteAllPlannerIds(plannerId: string) {
+    return this.lead.updateMany(
+      {},
       {
         $pull: { plannerIds: plannerId }
       }
