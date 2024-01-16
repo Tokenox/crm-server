@@ -27,7 +27,6 @@ export class PlannerService {
 
   // find planner by timeOfExecution and startDate, if timeOfExecution is come or past and startDate is today
   public async findPlannerByTime({ socialAction }: { socialAction: SocialAction }) {
-    console.log("socialAction-------", socialAction);
     const response = await this.planner.find({
       // find by timeOfExecution is past before 1 hour and current time
       // timeOfExecution: { $lte: new Date().getTime() },

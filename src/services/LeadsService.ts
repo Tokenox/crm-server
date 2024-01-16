@@ -93,7 +93,7 @@ export class LeadService {
   }
 
   public async findLeadsByPlannerId({ plannerId }: { plannerId: string }) {
-    return this.lead.find({ plannerIds: { $in: [plannerId] } }).limit(5);
+    return this.lead.find({ plannerIds: { $in: [plannerId] } }).limit(10);
   }
 
   public async findLeadBySource({ source }: { source: string }) {
