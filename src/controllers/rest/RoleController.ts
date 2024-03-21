@@ -34,7 +34,7 @@ export class RoleController {
   public async createRole(@BodyParams() body: RoleParams, @Context() context: Context) {
     await this.adminService.checkPermissions({ hasRole: [ADMIN] }, context.get("user"));
     const { name } = body;
-    let role = await this.roleService.findRoleById(name);
+    const role = await this.roleService.findRoleById(name);
     if (role) throw new BadRequest(ROLE_EXISTS);
     const response = await this.roleService.createRole({ name });
     const result = {
