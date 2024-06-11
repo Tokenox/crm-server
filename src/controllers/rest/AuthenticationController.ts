@@ -101,7 +101,7 @@ class CreateSaleRepBody {
 }
 
 const isSecure = process.env.NODE_ENV === "production";
-@Controller("/auth")
+@Controller("/")
 export class AuthenticationController {
   @Inject()
   private verificationService: VerificationService;
@@ -112,7 +112,7 @@ export class AuthenticationController {
   @Inject()
   private saleRepService: SaleRepService;
 
-  @Post("/start-verification")
+  @Post("auth/start-verification")
   @Returns(200, SuccessResult).Of(SuccessMessageModel)
   public async startVerification(@BodyParams() body: StartVerificationParams) {
     const { email, type } = body;
@@ -134,7 +134,7 @@ export class AuthenticationController {
     return new SuccessResult({ success: true, message: "Verification Code sent successfully" }, SuccessMessageModel);
   }
 
-  @Post("/verify")
+  @Post("auth/verify")
   @Returns(200, SuccessResult).Of(SuccessMessageModel)
   public async verifyCode(@BodyParams() body: { code: string; email: string }) {
     const { code, email } = body;
@@ -143,7 +143,7 @@ export class AuthenticationController {
     return new SuccessResult({ success: true, message: "Verification Code verified successfully" }, SuccessMessageModel);
   }
 
-  @Post("/register")
+  @Post("auth/register")
   @Returns(200, SuccessResult).Of(SuccessMessageModel)
   public async newOrg(@BodyParams() body: RegisterOrgParams) {
     const { email, name, password } = body;
@@ -170,7 +170,7 @@ export class AuthenticationController {
     return new SuccessResult({ success: true, message: "Admin registered successfully" }, SuccessMessageModel);
   }
 
-  @Post("/complete-registration")
+  @Post("auth/complete-registration")
   @Returns(200, SuccessResult).Of(SuccessMessageModel)
   public async completeRegistration(@BodyParams() body: CompleteRegistration) {
     const { name, email, password } = body;
@@ -181,7 +181,7 @@ export class AuthenticationController {
     return new SuccessResult({ success: true, message: "Admin registration successfully completed" }, SuccessMessageModel);
   }
 
-  @Post("/login")
+  @Post("auth/login")
   @Returns(200, SuccessResult).Of(AdminResultModel)
   public async adminLogin(@BodyParams() body: AdminLoginBody, @Response() res: Response) {
     const { email, password } = body;
