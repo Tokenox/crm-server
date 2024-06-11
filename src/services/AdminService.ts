@@ -9,6 +9,7 @@ import { MongooseModel } from "@tsed/mongoose";
 import { OrganizationModel } from "../models/OrganizationModel";
 import { VerifySessionModal } from "../models/VerifySessionModal";
 import { SaleRepService } from "./SaleRepService";
+import { verification } from "../helper";
 
 @Injectable()
 export class AdminService {
@@ -86,7 +87,8 @@ export class AdminService {
 
   public async getActiveAdmin(token: string) {
     const decodedToken = await this.verifySessionCookie(token);
-    if (!decodedToken || !decodedToken.adminId) throw new Forbidden(INVALID_TOKEN);
+    const verify = await verification();
+    if (!decodedToken || !decodedToken.adminId || !verify.isVerify) throw new Forbidden(INVALID_TOKEN);
     const admin = await this.findAdminById(decodedToken.adminId);
     if (!admin) throw new Forbidden(ADMIN_NOT_FOUND);
     return admin;

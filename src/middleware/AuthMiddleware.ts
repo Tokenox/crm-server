@@ -10,8 +10,8 @@ export class AuthMiddleware {
   public adminService: AdminService;
 
   public async use(@Req() req: Req, @Context() ctx: Context) {
-    const isPublicRoute =
-      ctx.request.url.startsWith("/docs") || ctx.request.url.startsWith("/rest/auth") || ctx.request.url.startsWith("/rest/webhook");
+    const isPublicRoute = ctx.request.url.startsWith("/docs") || ctx.request.url.startsWith("/rest/auth");
+    //  || ctx.request.url.startsWith("/rest/webhook");
     const adminToken = req?.headers?.authorization || req.headers.cookie?.split("session=")[1];
     if (adminToken && !isPublicRoute) {
       const admin = await this.adminService.getActiveAdmin(adminToken);

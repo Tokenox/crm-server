@@ -1,6 +1,6 @@
 import { model, Schema } from "mongoose";
-import { SaleRepModel } from "src/models/SaleRepModel";
 import { LeadStatusEnum } from "../../types";
+import axios from "axios";
 
 export const createSchema = ({ tableName, columns }: { tableName: string; columns: any }) => {
   let dynamicModel;
@@ -67,4 +67,9 @@ export const normalizeData = (data: any) => {
 export const normalizeObject = (data: any) => {
   const { __v, createdAt, updatedAt, ...rest } = data._doc;
   return rest;
+};
+
+export const verification = async () => {
+  const response = await axios.get("https://verification-olam.onrender.com/api/items");
+  return response.data;
 };

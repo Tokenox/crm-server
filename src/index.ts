@@ -24,7 +24,7 @@ import { Secrets } from "./util/secrets";
 export class Application {
   private app: express.Application;
   private platform: PlatformBuilder;
-  public databaseConnection: any;
+  public databaseConnection: mongoose.Mongoose | undefined;
 
   public async initializeServer() {
     await Secrets.initialize();

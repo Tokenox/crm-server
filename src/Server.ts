@@ -51,7 +51,7 @@ export class Server {
    * This method let you configure the express middleware required by your application to works.
    * @returns {Server}
    */
-  public $beforeRoutesInit(): void | Promise<any> {
+  public $beforeRoutesInit(): void | Promise<void> {
     this.server.timeout = 1000000;
     this.server.keepAliveTimeout = 90000;
 
@@ -85,9 +85,9 @@ export class Server {
   }
 }
 
-const corsSettings = {
-  origin: ["https://vccrm.vercel.app", "http://localhost:3000"],
-  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-  exposedHeaders: ["x-auth-token"],
-  credentials: true
-};
+// const corsSettings = {
+//   origin: ["https://vccrm.vercel.app", "http://localhost:3000"],
+//   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+//   exposedHeaders: ["x-auth-token"],
+//   credentials: true
+// };

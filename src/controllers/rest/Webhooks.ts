@@ -1,6 +1,6 @@
 import { Controller, Inject } from "@tsed/di";
 import { LeadService } from "../../services/LeadsService";
-import { Post, Property, Required, Returns, object } from "@tsed/schema";
+import { Post, Property, Required, Returns } from "@tsed/schema";
 import { SuccessResult } from "../../util/entities";
 import { LeadResultModel, SuccessMessageModel } from "../../models/RestModels";
 import { BodyParams } from "@tsed/platform-params";
