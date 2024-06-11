@@ -21,9 +21,10 @@ export class AuthMiddleware {
       const _admin = { ...admin.toObject(), id: admin._id };
       ctx.set("user", _admin);
       return;
-    }
-
-    if (ctx.has("user") || isPublicRoute) {
+      }
+      
+      if (ctx.has("user") || isPublicRoute) {
+      console.log("isPublicRoute", isPublicRoute);
       return;
     }
   }
